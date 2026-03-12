@@ -20,6 +20,16 @@ export interface TimelineEvent {
   text: string;
 }
 
+export interface DailySnapshot {
+  day:            number;
+  dateLabel:      string;
+  headline:       string;
+  risk:           RiskLevel;
+  riskFactors:    RiskFactor[];
+  interventions:  Intervention[];
+  events:         TimelineEvent[];
+}
+
 export interface Patient {
   id: number;
   name: string;
@@ -39,6 +49,7 @@ export interface Patient {
   riskFactors: RiskFactor[];
   interventions: Intervention[];
   timeline: TimelineEvent[];
+  dailySnapshots?: DailySnapshot[];
 }
 
 export const patients: Patient[] = [
@@ -252,7 +263,7 @@ export const patients: Patient[] = [
   }
 ];
 
-// ─── Ward Patient Generator ───────────────────────────────────────────────────
+// ─── Daily Snapshot Generation ────────────────────────────────────────────────
 
 function seeded(seed: number) {
   let s = seed;
@@ -309,6 +320,153 @@ const TIMELINE_TEMPLATES = [
   (d: number) => ({ time:'Target', status:'pending' as const, text:`EDD set. Awaiting ${d>7?'social care and pharmacy clearance':'pharmacy and family confirmation'}.` }),
 ];
 
+// ─── Daily Snapshot Generation ────────────────────────────────────────────────
+
+const CLINICAL_RF_POOL: RiskFactor[] = [
+  { icon:'critical', title:'IV access and monitoring required',    desc:'Patient on IV therapy. Cannula patent. Daily review needed. Fluid balance chart commenced.',             tag:'critical', tagLabel:'CLINICAL' },
+  { icon:'critical', title:'Investigations awaited',              desc:'Chest X-ray, full blood count and renal profile outstanding. Diagnosis cannot yet be confirmed.',          tag:'critical', tagLabel:'CLINICAL' },
+  { icon:'critical', title:'Haemodynamically unstable',           desc:'BP fluctuating. HDU review requested. Escalation criteria documented and in place.',                       tag:'critical', tagLabel:'CLINICAL' },
+  { icon:'warning',  title:'Infection markers elevated',          desc:'CRP > 200. Temperature 38.4 °C. IV antibiotics commenced as per local empirical guidelines.',              tag:'warning',  tagLabel:'CLINICAL' },
+  { icon:'warning',  title:'Specialist review requested',         desc:'Referral submitted to relevant specialty. Awaiting review within 24 hours.',                               tag:'warning',  tagLabel:'CLINICAL' },
+  { icon:'warning',  title:'Pain management ongoing',             desc:'Patient requiring regular analgesia. Pain score 6/10. PRN medications reviewed.',                          tag:'warning',  tagLabel:'CLINICAL' },
+  { icon:'info',     title:'Imaging ordered',                     desc:'CT scan / chest X-ray requested. Radiology appointment pending scheduling.',                               tag:'info',     tagLabel:'PENDING'  },
+  { icon:'info',     title:'Treatment response monitored',        desc:'Daily bloods and observations tracking response. Trending in the right direction.',                         tag:'info',     tagLabel:'MONITORING'},
+  { icon:'info',     title:'Step-down to oral therapy commenced', desc:'IV therapy complete. Switch to oral equivalent where appropriate. Tolerating well.',                       tag:'info',     tagLabel:'PROGRESS' },
+  { icon:'warning',  title:'Discharge planning not yet started',  desc:'Clinical focus during Days 1–3. Pathway assessment and social care referral deferred to Day 4+.',          tag:'warning',  tagLabel:'PENDING'  },
+];
+
+const CLINICAL_IV_POOL: Intervention[] = [
+  { title:'Order baseline investigations',          desc:'FBC, U+E, CRP, CXR, ECG. Results expected within 4 hours. Review with consultant at next round.',   priority:'urgent'      },
+  { title:'Commence IV antibiotics',                desc:'As per local empirical guidelines. IV access established. Review clinical response at 48 hours.',    priority:'urgent'      },
+  { title:'Establish IV access and monitoring',     desc:'IV cannula inserted. Fluid balance chart commenced. Observations 4-hourly minimum.',                 priority:'urgent'      },
+  { title:'Request specialist review',              desc:'Referral submitted to relevant specialty. Expected response within 24 hours.',                       priority:'recommended' },
+  { title:'Review imaging and investigation results',desc:'Radiologist / lab report expected. Consultant to review findings and update management plan.',      priority:'recommended' },
+  { title:'Reassess pain management',               desc:'Current analgesia reviewed. Consider step-up if pain score persistently > 5.',                      priority:'recommended' },
+  { title:'Step down to oral medications',          desc:'IV therapy course complete. Switch to oral equivalent where appropriate.',                           priority:'optional'    },
+];
+
+const PHASE1_HEADLINES = [
+  'Day 1 — results reviewed, treatment commenced',
+  'Day 2 — treatment under way, monitoring closely',
+  'Day 3 — initial clinical response assessed',
+];
+const PHASE2_HEADLINES = [
+  'Day 4 — clinically stabilising, discharge pathway identified',
+  'Day 5 — discharge planning in progress, pathway confirmed',
+  'Day 6 — medically optimised, logistic barriers emerging',
+];
+const PHASE1_EVENTS = [
+  'Diagnosis confirmed. Treatment plan initiated. Patient stable.',
+  'IV therapy commenced. Specialist review attended.',
+  'Clinical response assessed. Step-down considered.',
+];
+const PHASE2_EVENTS = [
+  'Medically fit declared. Discharge planning meeting held.',
+  'Social care referral submitted. OT assessment requested.',
+  'All clinical criteria met. Awaiting pathway clearance.',
+];
+
+function formatDayLabel(admitDate: Date, dayOffset: number): string {
+  const d = new Date(admitDate.getTime() + dayOffset * 86400000);
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]}`;
+}
+
+function buildDailySnapshots(
+  los: number,
+  finalRisk: RiskLevel,
+  finalRiskFactors: RiskFactor[],
+  finalInterventions: Intervention[],
+  finalTimeline: TimelineEvent[],
+  rng: () => number
+): DailySnapshot[] {
+  const admitDate = new Date(Date.now() - los * 86400000);
+  const snapshots: DailySnapshot[] = [];
+
+  for (let day = 0; day <= los; day++) {
+    const dateLabel = formatDayLabel(admitDate, day);
+
+    // Final day: exact copy of static patient state
+    if (day === los) {
+      snapshots.push({
+        day, dateLabel,
+        headline: 'Current state (live)',
+        risk: finalRisk,
+        riskFactors: finalRiskFactors,
+        interventions: finalInterventions,
+        events: finalTimeline,
+      });
+      continue;
+    }
+
+    let risk: RiskLevel;
+    let headline: string;
+    let riskFactors: RiskFactor[];
+    let interventions: Intervention[];
+    let events: TimelineEvent[];
+
+    if (day === 0) {
+      // Phase 0 — Admission
+      risk = 'high';
+      headline = 'Admission — assessment and investigations commenced';
+      riskFactors = [CLINICAL_RF_POOL[0], CLINICAL_RF_POOL[1]];
+      interventions = [CLINICAL_IV_POOL[0], CLINICAL_IV_POOL[2]];
+      events = [{ time: 'Day 0', status: 'pending', text: 'Admitted. Baseline investigations ordered. Patient assessed.' }];
+
+    } else if (day <= 3) {
+      // Phase 1 — Treatment
+      risk = day <= 1 ? 'high' : (rng() > 0.5 ? 'high' : 'medium');
+      headline = PHASE1_HEADLINES[day - 1];
+      const rfIdx = Math.floor(rng() * 3) + (day % 2 === 0 ? 1 : 0);
+      riskFactors = [CLINICAL_RF_POOL[rfIdx % 4], CLINICAL_RF_POOL[(rfIdx + 2) % 6]];
+      if (day === 3) riskFactors.push(CLINICAL_RF_POOL[9]); // discharge planning not started
+      interventions = [CLINICAL_IV_POOL[Math.floor(rng() * 3)], CLINICAL_IV_POOL[3 + Math.floor(rng() * 2)]];
+      events = [{ time: `Day ${day}`, status: 'done', text: PHASE1_EVENTS[day - 1] }];
+
+    } else if (day <= 6) {
+      // Phase 2 — Stabilisation + discharge planning
+      risk = 'medium';
+      headline = PHASE2_HEADLINES[day - 4];
+      const clinRf = CLINICAL_RF_POOL[7 + ((day - 4) % 2)];
+      const logRf  = RISK_FACTOR_POOL[Math.floor(rng() * 5)];
+      riskFactors = [clinRf, logRf];
+      interventions = [CLINICAL_IV_POOL[6], INTERVENTION_POOL[Math.floor(rng() * 5)]];
+      events = [{ time: `Day ${day}`, status: 'done', text: PHASE2_EVENTS[day - 4] }];
+
+    } else {
+      // Phase 3 — Bottlenecks dominate
+      risk = finalRisk;
+      headline = `Day ${day} — medically fit, discharge held by systemic barriers`;
+      const sliceEnd = Math.min(day - 6, finalRiskFactors.length);
+      riskFactors = finalRiskFactors.slice(0, Math.max(1, sliceEnd));
+      interventions = finalInterventions.slice(0, Math.max(1, Math.min(day - 6, finalInterventions.length)));
+      // Include timeline events whose day label is <= current day
+      events = finalTimeline.filter(t => {
+        const m = t.time.match(/Day\s*(\d+)/i);
+        return m ? parseInt(m[1]) <= day : false;
+      });
+      if (events.length === 0) {
+        events = [{ time: `Day ${day}`, status: 'pending', text: 'Medically fit. Discharge barriers under active management.' }];
+      }
+    }
+
+    snapshots.push({ day, dateLabel, headline, risk, riskFactors, interventions, events });
+  }
+
+  return snapshots;
+}
+
+// Populate dailySnapshots for the hardcoded Ward 7A patients
+patients.forEach(p => {
+  p.dailySnapshots = buildDailySnapshots(
+    p.los, p.risk, p.riskFactors, p.interventions, p.timeline,
+    seeded(parseInt(p.nhs.replace(/ /g, '')) % 999983)
+  );
+});
+
+// ─── Ward Patient Generator ───────────────────────────────────────────────────
+
 export function generateWardPatients(wardName: string, wardType: string, bedPrefix: string): Patient[] {
   const seed = wardName.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
   const r = seeded(seed);
@@ -350,6 +508,7 @@ export function generateWardPatients(wardName: string, wardType: string, bedPref
     const drdD = new Date(drdDate);
     const forecast = `${drdD.getDate()} ${months[drdD.getMonth()]}`;
 
+    const snapshotRng = seeded(seed + i * 97 + 7919);
     return {
       id: seed * 100 + i,
       name: `${firstName} ${lastName}`,
@@ -362,6 +521,7 @@ export function generateWardPatients(wardName: string, wardType: string, bedPref
       riskFactors,
       interventions,
       timeline,
+      dailySnapshots: buildDailySnapshots(los, risk, riskFactors, interventions, timeline, snapshotRng),
     };
   });
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import {
   Search, Activity, Users, Clock,
   BarChart2, LayoutDashboard, AlertTriangle, CheckCircle2,
@@ -59,6 +59,8 @@ export default function App() {
   const [selectedWard, setSelectedWard] = useState('Ward 7A');
   const [completedInterventions, setCompletedInterventions] = useState<Record<string, boolean>>({});
   const [activeView, setActiveView] = useState<'discharge' | 'digitalTwin' | 'chartReview' | 'snapshot' | 'resultsReview' | 'orders' | 'notes' | 'carePlan'>('discharge');
+  const [trajectoryDay, setTrajectoryDay] = useState<number | null>(null);
+  const [isPlaying,     setIsPlaying]     = useState(false);
 
   const filteredPatients = useMemo(() => {
     const ward = WARD_LIST.find(w => w.name === selectedWard);
@@ -78,6 +80,20 @@ export default function App() {
   const selectedPatient = useMemo(() => {
     return filteredPatients.find(p => p.id === selectedPatientId) || null;
   }, [filteredPatients, selectedPatientId]);
+
+  const activeSnapshot = useMemo(() => {
+    if (!selectedPatient?.dailySnapshots || trajectoryDay === null) return null;
+    return selectedPatient.dailySnapshots[trajectoryDay] ?? null;
+  }, [selectedPatient, trajectoryDay]);
+
+  useEffect(() => {
+    if (!isPlaying || !selectedPatient?.dailySnapshots) return;
+    const max = selectedPatient.dailySnapshots.length - 1;
+    const cur = trajectoryDay ?? max;
+    if (cur >= max) { setIsPlaying(false); return; }
+    const t = setTimeout(() => setTrajectoryDay(cur + 1), 1500);
+    return () => clearTimeout(t);
+  }, [isPlaying, trajectoryDay, selectedPatient]);
 
   const toggleIntervention = (patientId: number, interventionIndex: number) => {
     const key = `${patientId}-${interventionIndex}`;
@@ -201,7 +217,7 @@ export default function App() {
                   {/* Ward dropdown */}
                   <select
                     value={selectedWard}
-                    onChange={(e) => { setSelectedWard(e.target.value); setSelectedPatientId(null); }}
+                    onChange={(e) => { setSelectedWard(e.target.value); setSelectedPatientId(null); setTrajectoryDay(null); setIsPlaying(false); }}
                     className="w-full border border-slate-300 rounded text-xs px-2 py-1.5 bg-white focus:outline-none focus:border-blue-500 text-slate-700 font-medium"
                   >
                     {WARD_LIST.map(w => (
@@ -248,7 +264,7 @@ export default function App() {
                       {filteredPatients.map((p) => (
                         <tr
                           key={p.id}
-                          onClick={() => setSelectedPatientId(p.id)}
+                          onClick={() => { setSelectedPatientId(p.id); setTrajectoryDay(null); setIsPlaying(false); }}
                           className={`border-b border-slate-200 cursor-pointer hover:bg-blue-50 transition-colors ${selectedPatientId === p.id ? 'bg-blue-100' : ''}`}
                         >
                           <td className="py-2 px-3">
@@ -318,6 +334,62 @@ export default function App() {
                   })}
                 </div>
 
+                {/* Patient Trajectory Scrubber */}
+                {selectedPatient?.dailySnapshots && (
+                  <div className="shrink-0 bg-white border-t border-slate-200 px-4 py-2">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Patient Trajectory</span>
+                      {trajectoryDay === null ? (
+                        <span className="bg-green-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
+                      ) : (
+                        <span className="text-[10px] text-slate-500">Day {trajectoryDay} of {selectedPatient.dailySnapshots.length - 1}</span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => { const cur = trajectoryDay ?? (selectedPatient.dailySnapshots!.length - 1); setTrajectoryDay(Math.max(0, cur - 1)); setIsPlaying(false); }}
+                        disabled={trajectoryDay === 0}
+                        className="p-1 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30"
+                      ><ArrowLeft size={14}/></button>
+
+                      <input
+                        type="range" min={0} max={selectedPatient.dailySnapshots.length - 1}
+                        value={trajectoryDay ?? (selectedPatient.dailySnapshots.length - 1)}
+                        onChange={(e) => { setTrajectoryDay(Number(e.target.value)); setIsPlaying(false); }}
+                        className="flex-1 h-1.5 cursor-pointer accent-blue-600"
+                      />
+
+                      <button
+                        onClick={() => {
+                          const max = selectedPatient.dailySnapshots!.length - 1;
+                          const cur = trajectoryDay ?? max;
+                          if (cur >= max) { setTrajectoryDay(null); } else { setTrajectoryDay(Math.min(max, cur + 1)); }
+                          setIsPlaying(false);
+                        }}
+                        disabled={trajectoryDay === null}
+                        className="p-1 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30"
+                      ><ArrowRight size={14}/></button>
+
+                      <button
+                        onClick={() => {
+                          if (isPlaying) { setIsPlaying(false); return; }
+                          const max = selectedPatient.dailySnapshots!.length - 1;
+                          if (trajectoryDay === null || trajectoryDay >= max) setTrajectoryDay(0);
+                          setIsPlaying(true);
+                        }}
+                        className={`px-2 py-1 rounded text-[10px] font-bold ${isPlaying ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                      >{isPlaying ? 'Pause' : '▶ Play'}</button>
+
+                      {trajectoryDay !== null && (
+                        <button
+                          onClick={() => { setTrajectoryDay(null); setIsPlaying(false); }}
+                          className="px-2 py-1 rounded text-[10px] font-bold bg-green-600 text-white hover:bg-green-700"
+                        >Live</button>
+                      )}
+                    </div>
+                  </div>
+                )}
+
                 {/* Ward Stats bar */}
                 {(() => {
                   const totalBeds = 12;
@@ -349,23 +421,36 @@ export default function App() {
 
               {/* COL 3 — DISCHARGE DETAILS */}
               <div className="w-[380px] overflow-y-auto bg-slate-50 shrink-0 flex flex-col">
-                {selectedPatient ? (
+                {selectedPatient ? (() => {
+                  const displayRisk          = activeSnapshot?.risk          ?? selectedPatient.risk;
+                  const displayRiskFactors   = activeSnapshot?.riskFactors   ?? selectedPatient.riskFactors;
+                  const displayInterventions = activeSnapshot?.interventions ?? selectedPatient.interventions;
+                  const displayTimeline      = activeSnapshot?.events        ?? selectedPatient.timeline;
+                  return (
                   <div className="p-4 space-y-4">
+                    {/* Day banner (shown when viewing historical snapshot) */}
+                    {activeSnapshot && (
+                      <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-xs">
+                        <span className="font-bold text-blue-800">VIEWING DAY {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
+                        <div className="text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
+                      </div>
+                    )}
+
                     {/* Risk Banner */}
-                    <div className={`p-4 rounded-lg flex items-center gap-3 border ${getRiskBadgeClasses(selectedPatient.risk)} shadow-sm`}>
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${getRiskIconBg(selectedPatient.risk)} text-white`}>
-                        {selectedPatient.risk === 'low' ? <CheckCircle2 size={18}/> : <AlertTriangle size={18}/>}
+                    <div className={`p-4 rounded-lg flex items-center gap-3 border ${getRiskBadgeClasses(displayRisk)} shadow-sm`}>
+                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${getRiskIconBg(displayRisk)} text-white`}>
+                        {displayRisk === 'low' ? <CheckCircle2 size={18}/> : <AlertTriangle size={18}/>}
                       </div>
                       <div>
-                        <div className={`text-sm font-bold ${getRiskTextColor(selectedPatient.risk)}`}>
-                          {selectedPatient.risk === 'high' ? 'High Risk of Delayed Discharge' :
-                           selectedPatient.risk === 'medium' ? 'Medium Risk of Delayed Discharge' :
+                        <div className={`text-sm font-bold ${getRiskTextColor(displayRisk)}`}>
+                          {displayRisk === 'high' ? 'High Risk of Delayed Discharge' :
+                           displayRisk === 'medium' ? 'Medium Risk of Delayed Discharge' :
                            'Low Risk — On Track'}
                         </div>
                         <div className="text-[11px] text-slate-600 mt-0.5">
-                          {selectedPatient.risk === 'high'
-                            ? `${selectedPatient.riskFactors.filter(r => r.tag === 'critical').length} critical bottlenecks identified. Immediate action required.`
-                            : selectedPatient.risk === 'medium'
+                          {displayRisk === 'high'
+                            ? `${displayRiskFactors.filter(r => r.tag === 'critical').length} critical bottlenecks identified. Immediate action required.`
+                            : displayRisk === 'medium'
                             ? 'Moderate barriers present. Proactive steps recommended.'
                             : 'All discharge tasks progressing normally. Monitor for changes.'}
                         </div>
@@ -378,7 +463,7 @@ export default function App() {
                         <AlertTriangle size={12}/> Risk Factors Identified
                       </div>
                       <div className="divide-y divide-slate-100">
-                        {selectedPatient.riskFactors.map((rf, idx) => (
+                        {displayRiskFactors.map((rf, idx) => (
                           <div key={idx} className="flex gap-3 p-4">
                             <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-sm font-bold ${getFactorIconClasses(rf.icon)}`}>
                               {rf.icon === 'critical' ? '!' : rf.icon === 'warning' ? '~' : 'i'}
@@ -403,7 +488,7 @@ export default function App() {
                         <Activity size={12}/> Recommended Interventions
                       </div>
                       <div className="divide-y divide-slate-100">
-                        {selectedPatient.interventions.map((iv, idx) => {
+                        {displayInterventions.map((iv, idx) => {
                           const isDone = completedInterventions[`${selectedPatient.id}-${idx}`];
                           return (
                             <div key={idx} className="flex gap-3 p-4 items-start">
@@ -434,12 +519,12 @@ export default function App() {
                         <Clock size={12}/> Patient Journey Timeline
                       </div>
                       <div className="p-4 space-y-0">
-                        {selectedPatient.timeline.map((t, idx) => (
+                        {displayTimeline.map((t, idx) => (
                           <div key={idx} className="flex gap-3 text-[11px]">
                             <div className="font-mono text-[10px] text-slate-500 w-10 shrink-0 pt-0.5">{t.time}</div>
                             <div className="flex flex-col items-center">
                               <div className={`w-2 h-2 rounded-full shrink-0 mt-1.5 ${getTimelineDotColor(t.status)}`}/>
-                              {idx < selectedPatient.timeline.length - 1 && (
+                              {idx < displayTimeline.length - 1 && (
                                 <div className="w-px flex-1 bg-slate-200 my-1 min-h-[16px]"/>
                               )}
                             </div>
@@ -452,7 +537,8 @@ export default function App() {
                       </div>
                     </div>
                   </div>
-                ) : (
+                  );
+                })() : (
                   <div className="flex-1 flex items-center justify-center text-slate-400 text-sm p-8 text-center">
                     Select a patient from the list to view discharge planning details.
                   </div>
