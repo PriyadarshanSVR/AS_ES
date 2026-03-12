@@ -60,10 +60,10 @@ export const patients: Patient[] = [
     diagnosis: "Community-acquired pneumonia, COPD exacerbation",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "critical", title: "Discharge summary not started", desc: "Dr F. Ahmed (FY1) is on night shift rotation starting tomorrow. No summary drafted. Typical FY1 summary turnaround is 4.2 hours when written reactively.", tag: "critical", tagLabel: "Bottleneck" },
-      { icon: "critical", title: "Pharmacy understaffed today", desc: "2 of 5 ward pharmacists on sick leave. Current TTO queue: 14 patients. Estimated wait: 6+ hours. TTOs for this patient not yet prescribed.", tag: "critical", tagLabel: "Capacity" },
-      { icon: "warning", title: "Care home bed availability limited", desc: "Patient requires Pathway 1 (step-down). Only 2 beds available across 6 local care homes contacted. Placement unlikely before Thursday.", tag: "warning", tagLabel: "External" },
-      { icon: "info", title: "Family not yet informed of discharge plan", desc: "Daughter (primary carer contact) last spoke to ward on 6 Mar. No updated EDD communicated." }
+      { icon: "critical", title: "Discharge summary not started", desc: "FY1 on night shift tomorrow. Est. 4.2 hrs to complete.", tag: "critical", tagLabel: "Bottleneck" },
+      { icon: "critical", title: "Pharmacy understaffed today", desc: "3/5 pharmacists absent. TTO queue: 6+ hr wait.", tag: "critical", tagLabel: "Capacity" },
+      { icon: "warning", title: "Care home bed availability limited", desc: "Only 2 beds available. Placement unlikely before Thu.", tag: "warning", tagLabel: "External" },
+      { icon: "info", title: "Family not yet informed of discharge plan", desc: "Last contact 6 Mar. No EDD communicated to family." }
     ],
     interventions: [
       { title: "Assign discharge summary to Dr B. Lewis (FY2)", desc: "Dr Lewis is on day shift today and tomorrow. Capacity to complete by 17:00.", priority: "urgent" },
