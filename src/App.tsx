@@ -238,44 +238,39 @@ export default function App() {
                 </div>
               </div>
 
-              {/* COL 2 — FLOOR PLAN + PATIENT TRAJECTORY */}
-              <div className="flex-1 flex flex-col overflow-hidden bg-slate-100 border-r border-slate-200">
-                {/* Patient header card */}
-                <div className="shrink-0 bg-white border-b border-slate-200 px-5 py-4">
+              {/* RIGHT AREA — full-width header + COL 2 + COL 3 */}
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Full-width patient header — single row */}
+                <div className="shrink-0 bg-white border-b border-slate-200 px-5 py-2.5 flex items-center gap-3 min-w-0">
                   {selectedPatient ? (
                     <>
-                      {/* Row 1 — Name + age/sex badge */}
-                      <div className="flex items-center gap-2.5">
-                        <h2 className="font-bold text-lg text-slate-900 leading-tight">{selectedPatient.name}</h2>
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                          {selectedPatient.age}{selectedPatient.sex}
-                        </span>
-                      </div>
-
-                      {/* Row 2 — Stat chips */}
-                      <div className="flex flex-wrap gap-2 mt-2.5">
-                        {[
-                          { label: 'Bed',        value: `Bed ${bedLabel(selectedPatient.bed)}` },
-                          { label: 'LoS',        value: `${selectedPatient.los} days` },
-                          { label: 'Consultant', value: selectedPatient.consultant },
-                        ].map(({ label, value }) => (
-                          <div key={label} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{label}</span>
-                            <span className="text-xs font-semibold text-slate-700">{value}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Row 3 — Diagnosis */}
-                      <div className="mt-2.5 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-md px-3 py-1.5">
-                        <span className="text-[10px] font-bold uppercase tracking-wide text-blue-400 mt-0.5 shrink-0">Dx</span>
-                        <span className="text-xs text-blue-900 font-medium leading-snug">{selectedPatient.diagnosis}</span>
-                      </div>
+                      <h2 className="font-bold text-base text-slate-900 shrink-0">{selectedPatient.name}</h2>
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 shrink-0">
+                        {selectedPatient.age}{selectedPatient.sex}
+                      </span>
+                      <div className="w-px h-4 bg-slate-200 shrink-0 mx-1"/>
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400 shrink-0">Bed</span>
+                      <span className="text-xs font-semibold text-slate-700 shrink-0">{bedLabel(selectedPatient.bed)}</span>
+                      <div className="w-px h-4 bg-slate-200 shrink-0 mx-1"/>
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400 shrink-0">Length of Stay</span>
+                      <span className="text-xs font-semibold text-slate-700 shrink-0">{selectedPatient.los} days</span>
+                      <div className="w-px h-4 bg-slate-200 shrink-0 mx-1"/>
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400 shrink-0">Consultant</span>
+                      <span className="text-xs font-semibold text-slate-700 shrink-0">{selectedPatient.consultant}</span>
+                      <div className="w-px h-4 bg-slate-200 shrink-0 mx-1"/>
+                      <span className="text-[10px] font-bold uppercase tracking-wide text-blue-400 shrink-0">Diagnosis</span>
+                      <span className="text-xs text-blue-800 font-medium truncate">{selectedPatient.diagnosis}</span>
                     </>
                   ) : (
-                    <p className="text-sm text-slate-400 italic">Select a patient to view their location</p>
+                    <p className="text-sm text-slate-400 italic">Select a patient from the list.</p>
                   )}
                 </div>
+
+                {/* Inner row: COL 2 + COL 3 */}
+                <div className="flex-1 flex overflow-hidden">
+
+              {/* COL 2 — DISCHARGE RISK ASSESSMENT */}
+              <div className="flex-1 flex flex-col overflow-hidden bg-slate-100 border-r border-slate-200">
 
                 {/* Risk summary + Risk Factors */}
                 <div className="flex-1 overflow-y-auto m-3 space-y-3">
@@ -486,6 +481,8 @@ export default function App() {
                   </div>
                 )}
               </div>
+                </div>{/* end inner row */}
+              </div>{/* end right area */}
             </div>
           ) : !selectedPatient ? (
             <div className="flex-1 flex items-center justify-center text-slate-400">

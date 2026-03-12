@@ -60,16 +60,16 @@ export const patients: Patient[] = [
     diagnosis: "Community-acquired pneumonia, COPD exacerbation",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "critical", title: "Discharge summary not started", desc: "FY1 on night shift tomorrow. Est. 4.2 hrs to complete.", tag: "critical", tagLabel: "Bottleneck" },
-      { icon: "critical", title: "Pharmacy understaffed today", desc: "3/5 pharmacists absent. TTO queue: 6+ hr wait.", tag: "critical", tagLabel: "Capacity" },
-      { icon: "warning", title: "Care home bed availability limited", desc: "Only 2 beds available. Placement unlikely before Thu.", tag: "warning", tagLabel: "External" },
-      { icon: "info", title: "Family not yet informed of discharge plan", desc: "Last contact 6 Mar. No EDD communicated to family." }
+      { icon: "critical", title: "Discharge summary not started", desc: "FY1 unavailable tomorrow, no draft started.", tag: "critical", tagLabel: "Bottleneck" },
+      { icon: "critical", title: "Pharmacy understaffed today", desc: "3 of 5 absent, TTO queue 6+ hr wait.", tag: "critical", tagLabel: "Capacity" },
+      { icon: "warning", title: "Care home bed availability limited", desc: "Only 2 beds available, unlikely before Thursday.", tag: "warning", tagLabel: "External" },
+      { icon: "info", title: "Family not yet informed of discharge plan", desc: "No contact since 6 Mar, EDD not shared." }
     ],
     interventions: [
-      { title: "Assign discharge summary to Dr B. Lewis (FY2)", desc: "Dr Lewis is on day shift today and tomorrow. Capacity to complete by 17:00.", priority: "urgent" },
-      { title: "Escalate TTO to pharmacy lead", desc: "Flag as priority dispensing. Pre-prescribe TTOs now to enter queue ahead of ward round backlog.", priority: "urgent" },
-      { title: "Contact care transfer hub re: Pathway 1 beds", desc: "Request broadened search radius to include neighbouring borough care homes.", priority: "recommended" },
-      { title: "Call daughter (Mrs K. Thompson)", desc: "Inform of estimated discharge date and care home placement status.", priority: "recommended" }
+      { title: "Assign discharge summary to Dr B. Lewis (FY2)", desc: "Day shift today and tomorrow, complete by 17:00.", priority: "urgent" },
+      { title: "Escalate TTO to pharmacy lead", desc: "Pre-prescribe now to jump TTO queue.", priority: "urgent" },
+      { title: "Contact care transfer hub re: Pathway 1 beds", desc: "Broaden search to neighbouring borough homes.", priority: "recommended" },
+      { title: "Call daughter (Mrs K. Thompson)", desc: "Update on EDD and care home placement status.", priority: "recommended" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted via A&E with acute SOB" },
@@ -87,14 +87,14 @@ export const patients: Patient[] = [
     diagnosis: "Heart failure exacerbation, Type 2 diabetes",
     consultant: "Dr L. Chen",
     riskFactors: [
-      { icon: "critical", title: "Nursing home placement blocked", desc: "Requires Pathway 2 (rehab + nursing). 0 nursing home beds with cardiac monitoring capability available within 15-mile radius. Waitlist position: 4th.", tag: "critical", tagLabel: "Capacity" },
-      { icon: "critical", title: "Social worker assessment overdue", desc: "Referral sent Day 8. Social worker visit not yet scheduled. Care transfer hub backlog: 72 hours.", tag: "critical", tagLabel: "Bottleneck" },
-      { icon: "warning", title: "Complex medication regime", desc: "12 medications including warfarin dose titration. TTO preparation estimated at 90+ minutes. Requires pharmacist counselling session." }
+      { icon: "critical", title: "Nursing home placement blocked", desc: "No cardiac-capable beds within 15-mile radius.", tag: "critical", tagLabel: "Capacity" },
+      { icon: "critical", title: "Social worker assessment overdue", desc: "Referral Day 8, visit not scheduled, 72hr backlog.", tag: "critical", tagLabel: "Bottleneck" },
+      { icon: "warning", title: "Complex medication regime", desc: "12 meds including warfarin, TTOs take 90+ min." }
     ],
     interventions: [
-      { title: "Escalate to care transfer hub manager", desc: "Request priority assessment given 6 days past DRD. Invoke local authority 48-hour response commitment.", priority: "urgent" },
-      { title: "Pre-prescribe TTOs for pharmacy queue", desc: "Warfarin bridge plan and 12-med list can be prescribed now, saving 3+ hours on discharge day.", priority: "urgent" },
-      { title: "Arrange pharmacist counselling slot", desc: "Book 30-min session for Wed/Thu to avoid day-of-discharge delays.", priority: "recommended" }
+      { title: "Escalate to care transfer hub manager", desc: "6 days past DRD, invoke 48hr LA commitment.", priority: "urgent" },
+      { title: "Pre-prescribe TTOs for pharmacy queue", desc: "Prescribe now to save 3+ hrs on discharge day.", priority: "urgent" },
+      { title: "Arrange pharmacist counselling slot", desc: "Book Wed/Thu to avoid discharge-day delays.", priority: "recommended" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with acute decompensated HF" },
@@ -111,13 +111,13 @@ export const patients: Patient[] = [
     diagnosis: "Elective knee replacement (post-op day 5)",
     consultant: "Mr A. Shah",
     riskFactors: [
-      { icon: "critical", title: "Transport not booked", desc: "Patient requires wheelchair-accessible transport. Hospital transport fully booked for 11 Mar. No private transport arranged. Lives alone.", tag: "critical", tagLabel: "Bottleneck" },
-      { icon: "warning", title: "Home equipment not delivered", desc: "Raised toilet seat and grab rails ordered Day 5. Delivery confirmed for 12 Mar — one day after forecast discharge.", tag: "warning", tagLabel: "Logistics" }
+      { icon: "critical", title: "Transport not booked", desc: "Wheelchair transport fully booked, no alternative arranged.", tag: "critical", tagLabel: "Bottleneck" },
+      { icon: "warning", title: "Home equipment not delivered", desc: "Delivery 12 Mar, one day after forecast discharge.", tag: "warning", tagLabel: "Logistics" }
     ],
     interventions: [
-      { title: "Book transport for 11 Mar (AM slot)", desc: "Try external provider (Patient Transport Solutions). Hospital transport waitlist position: 7th.", priority: "urgent" },
-      { title: "Expedite equipment delivery to 10 Mar", desc: "Contact community OT equipment store. Flag as urgent to avoid bed-day loss.", priority: "urgent" },
-      { title: "Confirm home readiness with patient", desc: "Heating on, food available, neighbour aware of return date.", priority: "optional" }
+      { title: "Book transport for 11 Mar (AM slot)", desc: "Try external provider, hospital waitlist position 7.", priority: "urgent" },
+      { title: "Expedite equipment delivery to 10 Mar", desc: "Flag urgent to avoid bed-day loss.", priority: "urgent" },
+      { title: "Confirm home readiness with patient", desc: "Confirm heating, food, and neighbour support.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted for elective L knee replacement" },
@@ -133,14 +133,14 @@ export const patients: Patient[] = [
     diagnosis: "Acute pancreatitis (resolving), alcohol use disorder",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "critical", title: "Consultant review not yet completed today", desc: "Dr Patel's ward round running 2 hours late (emergency on Ward 6B). Discharge decision cannot be confirmed until review.", tag: "critical", tagLabel: "Bottleneck" },
-      { icon: "warning", title: "Community alcohol service referral pending", desc: "Referral sent Day 3. Acknowledgement received but appointment not yet allocated. Required before safe discharge.", tag: "warning", tagLabel: "External" },
-      { icon: "info", title: "Discharge summary partially drafted", desc: "60% complete. Medication reconciliation section outstanding — awaiting final consultant review." }
+      { icon: "critical", title: "Consultant review not yet completed today", desc: "Ward round 2hrs late, decision awaits review.", tag: "critical", tagLabel: "Bottleneck" },
+      { icon: "warning", title: "Community alcohol service referral pending", desc: "Referral Day 3, no appointment allocated yet.", tag: "warning", tagLabel: "External" },
+      { icon: "info", title: "Discharge summary partially drafted", desc: "60% complete, awaiting consultant medication review." }
     ],
     interventions: [
-      { title: "Request registrar to confirm discharge", desc: "Dr M. Hussain (SpR) can authorise if Dr Patel delegates. Saves 2+ hours.", priority: "urgent" },
-      { title: "Chase alcohol service appointment", desc: "Call community substance misuse team. Patient willing to engage — appointment accelerates discharge.", priority: "recommended" },
-      { title: "Complete discharge summary medication section", desc: "Pharmacist can reconcile medications now; doctor adds clinical narrative after.", priority: "recommended" }
+      { title: "Request registrar to confirm discharge", desc: "SpR can authorise if Dr Patel delegates.", priority: "urgent" },
+      { title: "Chase alcohol service appointment", desc: "Patient willing, appointment needed for safe discharge.", priority: "recommended" },
+      { title: "Complete discharge summary medication section", desc: "Pharmacist reconciles now, doctor adds narrative after.", priority: "recommended" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with epigastric pain, raised lipase" },
@@ -156,12 +156,12 @@ export const patients: Patient[] = [
     diagnosis: "Fall with NOF fracture (post ORIF), dementia",
     consultant: "Mr A. Shah",
     riskFactors: [
-      { icon: "warning", title: "Permanent care home placement in progress", desc: "Pathway 3. Family choosing between 2 shortlisted homes. Visit scheduled for 12 Mar.", tag: "warning", tagLabel: "Patient choice" },
-      { icon: "info", title: "Capacity of Medicines Management adequate", desc: "TTOs can be prepared within standard 4-hour window. No pharmacy bottleneck." }
+      { icon: "warning", title: "Permanent care home placement in progress", desc: "Family visit to shortlisted homes on 12 Mar.", tag: "warning", tagLabel: "Patient choice" },
+      { icon: "info", title: "Capacity of Medicines Management adequate", desc: "TTOs ready within standard 4-hour window." }
     ],
     interventions: [
-      { title: "Facilitate family care home visit", desc: "Offer virtual tour option to accelerate decision. Social worker to attend.", priority: "recommended" },
-      { title: "Pre-prepare discharge documentation", desc: "Summary and TTOs can be completed now — ready to execute on placement confirmation.", priority: "optional" }
+      { title: "Facilitate family care home visit", desc: "Offer virtual tour to speed family decision.", priority: "recommended" },
+      { title: "Pre-prepare discharge documentation", desc: "Complete now, execute on placement confirmation.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted following mechanical fall at home" },
@@ -177,12 +177,12 @@ export const patients: Patient[] = [
     diagnosis: "Cellulitis (right lower leg), Type 2 diabetes",
     consultant: "Dr L. Chen",
     riskFactors: [
-      { icon: "warning", title: "IV-to-oral antibiotic switch pending", desc: "Likely tomorrow based on CRP trajectory (falling: 142 → 87 → 54). Switch triggers discharge pathway.", tag: "warning", tagLabel: "Clinical" },
-      { icon: "info", title: "District nurse follow-up required", desc: "Wound packing changes needed post-discharge. DN team has 48h booking lead time." }
+      { icon: "warning", title: "IV-to-oral antibiotic switch pending", desc: "CRP falling (142→87→54), switch expected tomorrow.", tag: "warning", tagLabel: "Clinical" },
+      { icon: "info", title: "District nurse follow-up required", desc: "Wound changes needed, DN needs 48hr lead time." }
     ],
     interventions: [
-      { title: "Pre-book district nurse for 12 or 13 Mar", desc: "Submit referral now to meet 48h lead time. Prevents discharge-day delay.", priority: "recommended" },
-      { title: "Pre-prescribe oral antibiotics", desc: "Flucloxacillin 500mg QDS — can be added to TTO now pending consultant confirmation.", priority: "optional" }
+      { title: "Pre-book district nurse for 12 or 13 Mar", desc: "Submit now to meet 48hr lead time.", priority: "recommended" },
+      { title: "Pre-prescribe oral antibiotics", desc: "Can pre-prescribe pending consultant confirmation.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with spreading cellulitis" },
@@ -196,12 +196,12 @@ export const patients: Patient[] = [
     diagnosis: "UTI with delirium (resolving), underlying vascular dementia",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "warning", title: "Short-term care bed search in progress", desc: "Pathway 1. Care transfer hub has identified 3 potential beds. Awaiting provider response (24h SLA).", tag: "warning", tagLabel: "External" },
-      { icon: "info", title: "Delirium screening score improving", desc: "4AT score: 4 → 2 → 1 over last 72 hours. Cognitively near baseline per family." }
+      { icon: "warning", title: "Short-term care bed search in progress", desc: "3 beds identified, awaiting provider response (24h).", tag: "warning", tagLabel: "External" },
+      { icon: "info", title: "Delirium screening score improving", desc: "4AT score 4→2→1, near cognitive baseline." }
     ],
     interventions: [
-      { title: "Chase care home providers (3 pending)", desc: "Follow up on 24h SLA. Escalate if no response by 14:00.", priority: "recommended" },
-      { title: "Prepare TTOs and summary", desc: "Clinically stable. Documentation can be completed today.", priority: "optional" }
+      { title: "Chase care home providers (3 pending)", desc: "Escalate if no response by 14:00.", priority: "recommended" },
+      { title: "Prepare TTOs and summary", desc: "Clinically stable, complete documentation today.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with confusion, positive urine culture" },
@@ -216,10 +216,10 @@ export const patients: Patient[] = [
     diagnosis: "Chest pain (troponin negative x2), anxiety disorder",
     consultant: "Dr L. Chen",
     riskFactors: [
-      { icon: "info", title: "Awaiting final troponin at 18:00", desc: "If negative, discharge protocol auto-triggers. GP follow-up letter template pre-loaded." }
+      { icon: "info", title: "Awaiting final troponin at 18:00", desc: "Negative triggers auto-discharge, GP letter pre-loaded." }
     ],
     interventions: [
-      { title: "Pre-prepare discharge pack", desc: "Chest pain advice leaflet, GP letter, and outpatient cardiology referral can be readied now.", priority: "optional" }
+      { title: "Pre-prepare discharge pack", desc: "Prep leaflet, GP letter, cardiology referral now.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with central chest pain via A&E" },
@@ -233,10 +233,10 @@ export const patients: Patient[] = [
     diagnosis: "Asthma exacerbation (resolving)",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "info", title: "All discharge tasks on track", desc: "Summary written. TTOs prescribed and in pharmacy queue (position 3). Transport booked for 14:00. Husband collecting." }
+      { icon: "info", title: "All discharge tasks on track", desc: "TTOs in queue (pos. 3), transport booked 14:00." }
     ],
     interventions: [
-      { title: "Monitor TTO queue position", desc: "Currently position 3. Expected ready by 12:30. No action needed unless delayed past 13:00.", priority: "optional" }
+      { title: "Monitor TTO queue position", desc: "Expected ready 12:30, act only if past 13:00.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with acute wheeze, SpO2 88%" },
@@ -251,10 +251,10 @@ export const patients: Patient[] = [
     diagnosis: "COPD exacerbation (mild), community-acquired pneumonia",
     consultant: "Dr R. Patel",
     riskFactors: [
-      { icon: "info", title: "Clinically improving — discharge tomorrow likely", desc: "CRP 28 (from 95). Saturations 94% on room air. Oral antibiotics tolerated. Wife confirmed home support available." }
+      { icon: "info", title: "Clinically improving — discharge tomorrow likely", desc: "CRP 28 (from 95), sats 94%, home support ready." }
     ],
     interventions: [
-      { title: "Prepare TTOs and discharge summary tomorrow AM", desc: "Schedule for morning ward round. Patient can be discharged by noon if bloods stable.", priority: "optional" }
+      { title: "Prepare TTOs and discharge summary tomorrow AM", desc: "Schedule morning round, discharge by noon if stable.", priority: "optional" }
     ],
     timeline: [
       { time: "Day 1", status: "done", text: "Admitted with productive cough, CRP 95" },
@@ -287,29 +287,29 @@ const DIAGNOSES: Record<string, string[]> = {
 };
 
 const RISK_FACTOR_POOL: RiskFactor[] = [
-  { icon:'critical', title:'Discharge summary not started',      desc:'Responsible FY1 on annual leave. No cover allocated. Pharmacist cannot process TTOs until summary drafted.', tag:'critical', tagLabel:'BOTTLENECK' },
-  { icon:'critical', title:'Social care assessment outstanding', desc:'Patient requires full care package. SALT assessment pending. Community team referral not yet submitted.', tag:'critical', tagLabel:'BOTTLENECK' },
-  { icon:'critical', title:'Consultant sign-off pending',        desc:'Registrar has not obtained consultant agreement to discharge. Ward round not until tomorrow AM.', tag:'critical', tagLabel:'BOTTLENECK' },
-  { icon:'warning',  title:'Pharmacy TTO queue backlog',         desc:'Current TTO queue: 12 patients. Estimated wait 5+ hours. Medication counselling also required for this patient.', tag:'warning', tagLabel:'CAPACITY' },
-  { icon:'warning',  title:'Transport not yet arranged',         desc:'Patient requires non-emergency patient transport. Booking not confirmed. Estimated 3–4 hour lead time.', tag:'warning', tagLabel:'EXTERNAL' },
-  { icon:'warning',  title:'Family not informed of discharge',   desc:'Next of kin not contacted. Patient requested family collect them. No confirmation received.', tag:'warning', tagLabel:'EXTERNAL' },
-  { icon:'warning',  title:'Care home bed availability limited', desc:'Pathway 1 placement required. Only 1 bed available locally. Placement coordinator contacted.', tag:'warning', tagLabel:'EXTERNAL' },
-  { icon:'info',     title:'Discharge summary partially drafted',desc:'75% complete. Medication reconciliation section outstanding. Awaiting final investigation results.', tag:'info', tagLabel:'IN PROGRESS' },
-  { icon:'info',     title:'Outpatient follow-up not booked',    desc:'Requires clinic appointment within 2 weeks. Referral sent but slot not yet confirmed.', tag:'info', tagLabel:'IN PROGRESS' },
-  { icon:'info',     title:'Equipment order placed',             desc:'Zimmer frame and raised toilet seat ordered. Estimated delivery tomorrow. Discharge contingent on receipt.', tag:'info', tagLabel:'IN PROGRESS' },
+  { icon:'critical', title:'Discharge summary not started',      desc:'FY1 on leave, no cover, TTOs blocked.', tag:'critical', tagLabel:'BOTTLENECK' },
+  { icon:'critical', title:'Social care assessment outstanding', desc:'Full care package needed, SALT and referral pending.', tag:'critical', tagLabel:'BOTTLENECK' },
+  { icon:'critical', title:'Consultant sign-off pending',        desc:'Consultant agreement not obtained, round tomorrow AM.', tag:'critical', tagLabel:'BOTTLENECK' },
+  { icon:'warning',  title:'Pharmacy TTO queue backlog',         desc:'TTO queue 12 patients, 5+ hr wait.', tag:'warning', tagLabel:'CAPACITY' },
+  { icon:'warning',  title:'Transport not yet arranged',         desc:'NEPTS booking not confirmed, 3–4hr lead time.', tag:'warning', tagLabel:'EXTERNAL' },
+  { icon:'warning',  title:'Family not informed of discharge',   desc:'Next of kin not contacted, no confirmation received.', tag:'warning', tagLabel:'EXTERNAL' },
+  { icon:'warning',  title:'Care home bed availability limited', desc:'Only 1 local bed available, coordinator contacted.', tag:'warning', tagLabel:'EXTERNAL' },
+  { icon:'info',     title:'Discharge summary partially drafted',desc:'75% complete, med reconciliation and results awaited.', tag:'info', tagLabel:'IN PROGRESS' },
+  { icon:'info',     title:'Outpatient follow-up not booked',    desc:'Referral sent, appointment slot not yet confirmed.', tag:'info', tagLabel:'IN PROGRESS' },
+  { icon:'info',     title:'Equipment order placed',             desc:'Ordered, delivery tomorrow, discharge contingent on receipt.', tag:'info', tagLabel:'IN PROGRESS' },
 ];
 
 const INTERVENTION_POOL: Intervention[] = [
-  { title:'Complete discharge summary today',          desc:'Assign to Dr B. Lewis (FY2) who is on day shift. Consultant to review before 5 PM.',                       priority:'urgent' },
-  { title:'Chase pharmacy for TTOs',                   desc:'Escalate to ward pharmacist. Request fast-track if discharge planned before 3 PM.',                        priority:'urgent' },
-  { title:'Submit social care referral',               desc:'Contact integrated discharge team. Complete CHC checklist. Allow 48 h for assessment.',                    priority:'urgent' },
-  { title:'Book patient transport',                    desc:'Call NEPTS on ext 4421. Confirm pickup address and mobility requirements.',                                 priority:'recommended' },
-  { title:'Notify family of discharge plan',           desc:'Call primary carer. Confirm EDD and any equipment needs. Document in notes.',                              priority:'recommended' },
-  { title:'Arrange outpatient follow-up',              desc:'Refer to relevant outpatient clinic. Ensure letter sent to GP simultaneously.',                            priority:'recommended' },
-  { title:'Confirm care home placement',               desc:'Contact placement coordinator. Two homes have vacancies — confirm suitability with family.',               priority:'recommended' },
-  { title:'Request equipment delivery confirmation',   desc:'Chase community OT. Equipment required before discharge can proceed.',                                     priority:'recommended' },
-  { title:'Update e-discharge in EPR',                 desc:'Ensure GP letter auto-generated and reviewed before patient leaves.',                                      priority:'optional' },
-  { title:'Confirm medication counselling done',       desc:'Pharmacist to confirm patient understands new medications before discharge.',                              priority:'optional' },
+  { title:'Complete discharge summary today',          desc:'Assign FY2 on day shift, review by 17:00.',             priority:'urgent' },
+  { title:'Chase pharmacy for TTOs',                   desc:'Escalate to pharmacist, fast-track if before 15:00.',   priority:'urgent' },
+  { title:'Submit social care referral',               desc:'Contact IDT, CHC checklist, allow 48hrs assessment.',   priority:'urgent' },
+  { title:'Book patient transport',                    desc:'Call NEPTS, confirm address and mobility needs.',        priority:'recommended' },
+  { title:'Notify family of discharge plan',           desc:'Call carer, confirm EDD and equipment needs.',          priority:'recommended' },
+  { title:'Arrange outpatient follow-up',              desc:'Refer to clinic, GP letter sent simultaneously.',       priority:'recommended' },
+  { title:'Confirm care home placement',               desc:'Two homes available, confirm suitability with family.', priority:'recommended' },
+  { title:'Request equipment delivery confirmation',   desc:'Chase community OT, equipment needed before discharge.',priority:'recommended' },
+  { title:'Update e-discharge in EPR',                 desc:'Ensure GP letter reviewed before patient leaves.',      priority:'optional' },
+  { title:'Confirm medication counselling done',       desc:'Confirm patient understands new meds before discharge.',priority:'optional' },
 ];
 
 const TIMELINE_TEMPLATES = [
