@@ -6,7 +6,6 @@ import {
   ArrowLeft, ArrowRight, Home, Calendar, Inbox, FileText, Printer, Lock, LogOut
 } from 'lucide-react';
 import { patients, Patient, RiskLevel, generateWardPatients } from './data';
-import DigitalTwin from './DigitalTwin';
 
 const WARD_LIST = [
   // floorplan 0 — ward-floorplan.png (5 wards)
@@ -58,7 +57,7 @@ export default function App() {
   const [riskFilter, setRiskFilter] = useState<'all' | RiskLevel>('all');
   const [selectedWard, setSelectedWard] = useState('Ward 7A');
   const [completedInterventions, setCompletedInterventions] = useState<Record<string, boolean>>({});
-  const [activeView, setActiveView] = useState<'discharge' | 'digitalTwin' | 'chartReview' | 'snapshot' | 'resultsReview' | 'orders' | 'notes' | 'carePlan'>('discharge');
+  const [activeView, setActiveView] = useState<'discharge' | 'chartReview' | 'snapshot' | 'resultsReview' | 'orders' | 'notes' | 'carePlan'>('discharge');
   const [trajectoryDay, setTrajectoryDay] = useState<number | null>(null);
   const [isPlaying,     setIsPlaying]     = useState(false);
 
@@ -110,7 +109,6 @@ export default function App() {
   };
 
   const viewLabel = activeView === 'discharge' ? 'Discharge Planning' :
-    activeView === 'digitalTwin' ? 'Digital Twin' :
     activeView === 'snapshot' ? 'SnapShot' :
     activeView === 'chartReview' ? 'Chart Review' :
     activeView === 'resultsReview' ? 'Results Review' :
@@ -165,7 +163,7 @@ export default function App() {
       </div>
 
       {/* PATIENT BANNER */}
-      {selectedPatient && activeView !== 'digitalTwin' && activeView !== 'discharge' && (
+      {selectedPatient && activeView !== 'discharge' && (
         <div className="bg-[#FFF9C4] border-b border-[#FBC02D] px-4 py-2 flex items-center gap-6 shrink-0 text-xs">
           <div className="font-bold text-sm">{selectedPatient.name}</div>
           <div className="flex items-center gap-4 text-slate-700">
@@ -197,7 +195,7 @@ export default function App() {
             <SidebarItem label="Orders" icon={<Activity size={14}/>} active={activeView === 'orders'} onClick={() => setActiveView('orders')} />
             <div className="my-1 border-t border-slate-300"></div>
             <SidebarItem label="Discharge Planning" icon={<Users size={14}/>} active={activeView === 'discharge'} onClick={() => setActiveView('discharge')} />
-            <SidebarItem label="Digital Twin" icon={<BarChart2 size={14}/>} active={activeView === 'digitalTwin'} onClick={() => setActiveView('digitalTwin')} />
+
             <div className="my-1 border-t border-slate-300"></div>
             <SidebarItem label="Notes" icon={<FileText size={14}/>} active={activeView === 'notes'} onClick={() => setActiveView('notes')} />
             <SidebarItem label="Care Plan" icon={<CheckCircle2 size={14}/>} active={activeView === 'carePlan'} onClick={() => setActiveView('carePlan')} />
@@ -206,9 +204,7 @@ export default function App() {
 
         {/* CONTENT AREA */}
         <div className="flex-1 overflow-hidden flex flex-col">
-          {activeView === 'digitalTwin' ? (
-            <DigitalTwin />
-          ) : activeView === 'discharge' ? (
+          {activeView === 'discharge' ? (
             <div className="flex-1 flex overflow-hidden">
 
               {/* COL 1 — PATIENT LIST */}
