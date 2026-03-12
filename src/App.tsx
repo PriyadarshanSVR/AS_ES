@@ -10,26 +10,26 @@ import DigitalTwin from './DigitalTwin';
 
 const WARD_LIST = [
   // floorplan 0 — ward-floorplan.png (5 wards)
-  { name: 'Ward 7A',                                     site: 'GRH', type: 'General Medicine',       bedPrefix: '7A',  floorPlan: '/ward-floorplan.png'   },
-  { name: 'Ward 1 Medical',                              site: 'Gen', type: 'Medical',                bedPrefix: '1M',  floorPlan: '/ward-floorplan.png'   },
-  { name: 'Ward 2 Surgical',                             site: 'Gen', type: 'Surgical',               bedPrefix: '2S',  floorPlan: '/ward-floorplan.png'   },
-  { name: 'Ward 3 Cardiology',                           site: 'Gen', type: 'Cardiology',             bedPrefix: '3C',  floorPlan: '/ward-floorplan.png'   },
-  { name: 'Ward 4 Gastroenterology',                     site: 'Gen', type: 'Gastroenterology',       bedPrefix: '4G',  floorPlan: '/ward-floorplan.png'   },
+  { name: 'Ward 7A',                                     site: 'GRH', type: 'General Medicine',       bedPrefix: '7A',  floorPlan: 'ward-floorplan.png'   },
+  { name: 'Ward 1 Medical',                              site: 'Gen', type: 'Medical',                bedPrefix: '1M',  floorPlan: 'ward-floorplan.png'   },
+  { name: 'Ward 2 Surgical',                             site: 'Gen', type: 'Surgical',               bedPrefix: '2S',  floorPlan: 'ward-floorplan.png'   },
+  { name: 'Ward 3 Cardiology',                           site: 'Gen', type: 'Cardiology',             bedPrefix: '3C',  floorPlan: 'ward-floorplan.png'   },
+  { name: 'Ward 4 Gastroenterology',                     site: 'Gen', type: 'Gastroenterology',       bedPrefix: '4G',  floorPlan: 'ward-floorplan.png'   },
   // floorplan 1 — ward-floorplan_1.png (4 wards)
-  { name: 'Acute Care Unit C CGH',                       site: 'CGH', type: 'AMU',                    bedPrefix: 'AC',  floorPlan: '/ward-floorplan_1.png' },
-  { name: 'Alstone Ward CGH',                            site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'AL',  floorPlan: '/ward-floorplan_1.png' },
-  { name: 'Acute Medical Unit 2 GRH',                    site: 'GRH', type: 'AMU',                    bedPrefix: 'AM',  floorPlan: '/ward-floorplan_1.png' },
-  { name: 'Avening Ward CGH',                            site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'AV',  floorPlan: '/ward-floorplan_1.png' },
+  { name: 'Acute Care Unit C CGH',                       site: 'CGH', type: 'AMU',                    bedPrefix: 'AC',  floorPlan: 'ward-floorplan_1.png' },
+  { name: 'Alstone Ward CGH',                            site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'AL',  floorPlan: 'ward-floorplan_1.png' },
+  { name: 'Acute Medical Unit 2 GRH',                    site: 'GRH', type: 'AMU',                    bedPrefix: 'AM',  floorPlan: 'ward-floorplan_1.png' },
+  { name: 'Avening Ward CGH',                            site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'AV',  floorPlan: 'ward-floorplan_1.png' },
   // floorplan 2 — ward-floorplan_2.png (4 wards)
-  { name: 'Bibury Ward CGH',                             site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'BI',  floorPlan: '/ward-floorplan_2.png' },
-  { name: 'Cardiac Ward CGH',                            site: 'CGH', type: 'Non-Elective Specialty', bedPrefix: 'CW',  floorPlan: '/ward-floorplan_2.png' },
-  { name: 'Cardiology GRH',                              site: 'GRH', type: 'Non-Elective Specialty', bedPrefix: 'CG',  floorPlan: '/ward-floorplan_2.png' },
-  { name: 'Dept of Critical Care CGH',                   site: 'CGH', type: 'DCC',                    bedPrefix: 'DC',  floorPlan: '/ward-floorplan_2.png' },
+  { name: 'Bibury Ward CGH',                             site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'BI',  floorPlan: 'ward-floorplan_2.png' },
+  { name: 'Cardiac Ward CGH',                            site: 'CGH', type: 'Non-Elective Specialty', bedPrefix: 'CW',  floorPlan: 'ward-floorplan_2.png' },
+  { name: 'Cardiology GRH',                              site: 'GRH', type: 'Non-Elective Specialty', bedPrefix: 'CG',  floorPlan: 'ward-floorplan_2.png' },
+  { name: 'Dept of Critical Care CGH',                   site: 'CGH', type: 'DCC',                    bedPrefix: 'DC',  floorPlan: 'ward-floorplan_2.png' },
   // floorplan 3 — ward-floorplan_3.png (4 wards)
-  { name: 'Dept of Critical Care GRH',                   site: 'GRH', type: 'DCC',                    bedPrefix: 'DG',  floorPlan: '/ward-floorplan_3.png' },
-  { name: 'Dixton Ward CGH',                             site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'DI',  floorPlan: '/ward-floorplan_3.png' },
-  { name: 'Frailty Assessment Unit GRH',                 site: 'GRH', type: 'Non-Elective Specialty', bedPrefix: 'FA',  floorPlan: '/ward-floorplan_3.png' },
-  { name: 'Gloucestershire Priority Admission Unit GRH', site: 'GRH', type: 'GPAU',                   bedPrefix: 'GP',  floorPlan: '/ward-floorplan_3.png' },
+  { name: 'Dept of Critical Care GRH',                   site: 'GRH', type: 'DCC',                    bedPrefix: 'DG',  floorPlan: 'ward-floorplan_3.png' },
+  { name: 'Dixton Ward CGH',                             site: 'CGH', type: 'Elective Specialty',     bedPrefix: 'DI',  floorPlan: 'ward-floorplan_3.png' },
+  { name: 'Frailty Assessment Unit GRH',                 site: 'GRH', type: 'Non-Elective Specialty', bedPrefix: 'FA',  floorPlan: 'ward-floorplan_3.png' },
+  { name: 'Gloucestershire Priority Admission Unit GRH', site: 'GRH', type: 'GPAU',                   bedPrefix: 'GP',  floorPlan: 'ward-floorplan_3.png' },
 ];
 
 // Bed positions mapped to the ward floor plan image (as % of image width/height)
@@ -292,7 +292,7 @@ export default function App() {
                 {/* Floor plan */}
                 <div className="flex-1 relative overflow-hidden m-3 rounded-lg border border-slate-200 bg-white shadow-sm">
                   <img
-                    src={WARD_LIST.find(w => w.name === selectedWard)?.floorPlan ?? '/ward-floorplan.png'}
+                    src={`${import.meta.env.BASE_URL}${WARD_LIST.find(w => w.name === selectedWard)?.floorPlan ?? 'ward-floorplan.png'}`}
                     alt={`${selectedWard} Floor Plan`}
                     className="w-full h-full object-contain"
                     onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}

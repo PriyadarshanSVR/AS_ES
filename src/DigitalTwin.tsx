@@ -98,7 +98,7 @@ function FloorPlanMini({ beds }: { beds: string[] }) {
   ];
   return (
     <div className="relative w-full h-full">
-      <img src="/ward-floorplan.png" alt="Ward Floor Plan" className="w-full h-full object-contain"/>
+      <img src={`${import.meta.env.BASE_URL}ward-floorplan.png`} alt="Ward Floor Plan" className="w-full h-full object-contain"/>
       {beds.slice(0, bedPositions.length).map((status, i) => (
         <div
           key={i}
@@ -473,7 +473,7 @@ export default function DigitalTwin() {
               {/* Image + overlay */}
               <div className="flex-1 relative overflow-hidden">
                 <img
-                  src="/ward-floorplan.png"
+                  src={`${import.meta.env.BASE_URL}ward-floorplan.png`}
                   alt="Ward 6A Topological Floor Plan"
                   className="w-full h-full object-contain"
                 />
