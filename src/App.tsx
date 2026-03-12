@@ -33,17 +33,20 @@ const WARD_LIST = [
 
 // Bed positions mapped to the ward floor plan image (as % of image width/height)
 const BED_POSITIONS: Record<string, { left: string; top: string }> = {
-  '7A-01': { left: '5%',  top: '43%' },  // SAU 636 — bed 1
-  '7A-02': { left: '5%',  top: '54%' },  // SAU 636 — bed 2
-  '7A-03': { left: '12%', top: '43%' },  // SAU 636 — bed 3
-  '7A-04': { left: '29%', top: '32%' },  // 6-Bed Ward 634 — left col 1
-  '7A-05': { left: '29%', top: '43%' },  // 6-Bed Ward 634 — left col 2
-  '7A-06': { left: '29%', top: '54%' },  // 6-Bed Ward 634 — left col 3
-  '7A-07': { left: '41%', top: '32%' },  // 6-Bed Ward 634 — right col 1
-  '7A-08': { left: '41%', top: '43%' },  // 6-Bed Ward 634 — right col 2
-  '7A-09': { left: '41%', top: '54%' },  // 6-Bed Ward 634 — right col 3
-  '7A-10': { left: '7%',  top: '77%' },  // 4-Bed Ward 640
+  '7A-01': { left: '6%',  top: '28%' },  // Single Ward (top-left room)
+  '7A-02': { left: '3%',  top: '40%' },  // SAU — left col row 1
+  '7A-03': { left: '3%',  top: '52%' },  // SAU — left col row 2
+  '7A-04': { left: '3%',  top: '63%' },  // SAU — left col row 3
+  '7A-05': { left: '11%', top: '40%' },  // SAU — right col row 1
+  '7A-06': { left: '11%', top: '52%' },  // SAU — right col row 2
+  '7A-07': { left: '11%', top: '63%' },  // SAU — right col row 3
+  '7A-08': { left: '21%', top: '35%' },  // 6 Bed Ward — left col row 1
+  '7A-09': { left: '21%', top: '52%' },  // 6 Bed Ward — left col row 2
+  '7A-10': { left: '50%', top: '35%' },  // 6 Bed Ward — right col row 1
 };
+
+// Strip ward prefix and leading zeros: "7A-01" → "1", "AC-12" → "12"
+const bedLabel = (bed: string) => String(parseInt(bed.split('-')[1] ?? bed, 10));
 
 function getRiskHex(risk: RiskLevel) {
   if (risk === 'high')   return '#C53030';
@@ -118,48 +121,35 @@ export default function App() {
   return (
     <div className="flex flex-col h-screen overflow-hidden bg-[#E6E8EB] text-slate-900 font-sans text-sm">
       {/* EPIC TOP MENU BAR */}
-      <div className="bg-[#2B579A] text-white flex items-center px-2 py-1 text-xs font-medium shrink-0">
-        <div className="flex space-x-4">
-          {['Epic','Desktop','Action','Patient Care','Tools','Reports','Window','Help'].map(item => (
-            <span key={item} className="cursor-pointer hover:bg-white/10 px-2 py-1 rounded">{item}</span>
-          ))}
-        </div>
-        <div className="ml-auto flex items-center space-x-4">
-          <span>Dr. S. Johnson</span>
-          <span>Discharge Coordinator</span>
-          <span>Ward 7A</span>
-        </div>
+      <div className="bg-[#2B579A] text-white flex items-center px-3 py-1 text-xs font-medium shrink-0 gap-4">
+        <span className="font-bold tracking-wide">AI Discharge Control Center</span>
+        <div className="w-px h-4 bg-white/30"/>
+        <span>Dr. S. Johnson</span>
+        <span>Ward 7A</span>
       </div>
 
-      {/* EPIC TOOLBAR */}
-      <div className="bg-[#F3F5F8] border-b border-slate-300 flex items-center px-2 py-1 shrink-0 gap-1">
-        <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600"><ArrowLeft size={16}/></button>
-        <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600"><ArrowRight size={16}/></button>
-        <div className="w-px h-5 bg-slate-300 mx-1"></div>
-        <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-slate-200 rounded text-slate-700 font-medium text-xs"><Home size={14}/> Home</button>
-        <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-slate-200 rounded text-slate-700 font-medium text-xs"><Calendar size={14}/> Schedule</button>
-        <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-slate-200 rounded text-slate-700 font-medium text-xs"><Inbox size={14}/> In Basket</button>
-        <button className="flex items-center gap-1 px-2 py-1.5 hover:bg-slate-200 rounded text-slate-700 font-medium text-xs"><Users size={14}/> Patient Lists</button>
-        <div className="w-px h-5 bg-slate-300 mx-1"></div>
-        <div className="relative flex items-center">
-          <Search className="absolute left-2 text-slate-400" size={14}/>
-          <input type="text" placeholder="Patient Search" className="pl-7 pr-2 py-1 border border-slate-300 rounded text-xs w-48 focus:outline-none focus:border-blue-500"/>
-        </div>
-        <div className="ml-auto flex items-center gap-1">
-          <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600"><Printer size={16}/></button>
-          <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600"><Lock size={16}/></button>
-          <button className="p-1.5 hover:bg-slate-200 rounded text-slate-600"><LogOut size={16}/></button>
-        </div>
-      </div>
-
-      {/* EPIC TAB BAR */}
-      <div className="bg-[#E6E8EB] flex items-end px-2 pt-1 gap-1 shrink-0 border-b border-slate-300">
-        <div className="bg-slate-300 px-4 py-1.5 rounded-t-md text-xs font-medium text-slate-600 cursor-pointer border border-b-0 border-slate-400">Epic</div>
-        <div className="bg-slate-300 px-4 py-1.5 rounded-t-md text-xs font-medium text-slate-600 cursor-pointer border border-b-0 border-slate-400">Home</div>
-        <div className="bg-white px-4 py-1.5 rounded-t-md text-xs font-bold text-slate-800 cursor-pointer border border-b-0 border-slate-300 shadow-[0_-2px_4px_rgba(0,0,0,0.05)] relative">
-          {viewLabel}
-          <div className="absolute bottom-[-1px] left-0 right-0 h-px bg-white"></div>
-        </div>
+      {/* ACTIVITIES TAB BAR */}
+      <div className="bg-[#F3F5F8] border-b border-slate-300 flex items-center px-2 gap-0.5 shrink-0">
+        {[
+          { label: 'SnapShot',           view: 'snapshot',      icon: <LayoutDashboard size={13}/> },
+          { label: 'Chart Review',       view: 'chartReview',   icon: <FileText size={13}/> },
+          { label: 'Results Review',     view: 'resultsReview', icon: <ActivitySquare size={13}/> },
+          { label: 'Orders',             view: 'orders',        icon: <Activity size={13}/> },
+          { label: 'Discharge Planning', view: 'discharge',     icon: <Users size={13}/> },
+          { label: 'Notes',              view: 'notes',         icon: <FileText size={13}/> },
+          { label: 'Care Plan',          view: 'carePlan',      icon: <CheckCircle2 size={13}/> },
+        ].map(({ label, view, icon }) => (
+          <button
+            key={view}
+            onClick={() => setActiveView(view as typeof activeView)}
+            className={`flex items-center gap-1.5 px-3 py-2 text-[11px] font-medium border-b-2 transition-colors whitespace-nowrap
+              ${activeView === view
+                ? 'border-[#2B579A] text-[#2B579A] bg-white'
+                : 'border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200'}`}
+          >
+            {icon}{label}
+          </button>
+        ))}
       </div>
 
       {/* PATIENT BANNER */}
@@ -171,7 +161,7 @@ export default function App() {
             <span><span className="font-semibold">Age:</span> {selectedPatient.age}</span>
             <span><span className="font-semibold">DOB:</span> 12/05/1945</span>
             <span><span className="font-semibold">MRN:</span> {selectedPatient.nhs}</span>
-            <span><span className="font-semibold">Loc:</span> {selectedPatient.bed}</span>
+            <span><span className="font-semibold">Loc:</span> {bedLabel(selectedPatient.bed)}</span>
             <span><span className="font-semibold">Admit:</span> {formatDate(new Date(Date.now() - selectedPatient.los * 24 * 60 * 60 * 1000).toISOString())}</span>
           </div>
           <div className="ml-auto flex gap-2">
@@ -185,30 +175,13 @@ export default function App() {
       {/* MAIN WORKSPACE */}
       <div className="flex-1 flex overflow-hidden bg-white">
 
-        {/* LEFT SIDEBAR */}
-        <div className="w-48 bg-[#F3F5F8] border-r border-slate-300 flex flex-col shrink-0 overflow-y-auto">
-          <div className="p-2 font-bold text-slate-700 border-b border-slate-300 bg-slate-200">Activities</div>
-          <div className="py-1">
-            <SidebarItem label="SnapShot" icon={<LayoutDashboard size={14}/>} active={activeView === 'snapshot'} onClick={() => setActiveView('snapshot')} />
-            <SidebarItem label="Chart Review" icon={<FileText size={14}/>} active={activeView === 'chartReview'} onClick={() => setActiveView('chartReview')} />
-            <SidebarItem label="Results Review" icon={<ActivitySquare size={14}/>} active={activeView === 'resultsReview'} onClick={() => setActiveView('resultsReview')} />
-            <SidebarItem label="Orders" icon={<Activity size={14}/>} active={activeView === 'orders'} onClick={() => setActiveView('orders')} />
-            <div className="my-1 border-t border-slate-300"></div>
-            <SidebarItem label="Discharge Planning" icon={<Users size={14}/>} active={activeView === 'discharge'} onClick={() => setActiveView('discharge')} />
-
-            <div className="my-1 border-t border-slate-300"></div>
-            <SidebarItem label="Notes" icon={<FileText size={14}/>} active={activeView === 'notes'} onClick={() => setActiveView('notes')} />
-            <SidebarItem label="Care Plan" icon={<CheckCircle2 size={14}/>} active={activeView === 'carePlan'} onClick={() => setActiveView('carePlan')} />
-          </div>
-        </div>
-
         {/* CONTENT AREA */}
         <div className="flex-1 overflow-hidden flex flex-col">
           {activeView === 'discharge' ? (
             <div className="flex-1 flex overflow-hidden">
 
               {/* COL 1 — PATIENT LIST */}
-              <div className="w-[420px] border-r border-slate-300 flex flex-col bg-white shrink-0">
+              <div className="w-[315px] border-r border-slate-300 flex flex-col bg-white shrink-0">
                 <div className="p-2 border-b border-slate-300 bg-slate-50 flex flex-col gap-2 shrink-0">
                   {/* Ward dropdown */}
                   <select
@@ -241,59 +214,62 @@ export default function App() {
                   </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
-                  <table className="w-full text-left border-collapse text-xs">
-                    <thead className="sticky top-0 bg-slate-100 shadow-sm z-10">
-                      <tr className="border-b border-slate-300 text-slate-600">
-                        <th className="py-1.5 px-3 font-medium">Patient</th>
-                        <th className="py-1.5 px-3 font-medium">Bed</th>
-                        <th className="py-1.5 px-3 font-medium">Risk</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredPatients.length === 0 && (
-                        <tr>
-                          <td colSpan={3} className="py-8 text-center text-xs text-slate-400 italic">
-                            No patients found for {selectedWard}
-                          </td>
-                        </tr>
-                      )}
-                      {filteredPatients.map((p) => (
-                        <tr
-                          key={p.id}
-                          onClick={() => { setSelectedPatientId(p.id); setTrajectoryDay(null); setIsPlaying(false); }}
-                          className={`border-b border-slate-200 cursor-pointer hover:bg-blue-50 transition-colors ${selectedPatientId === p.id ? 'bg-blue-100' : ''}`}
-                        >
-                          <td className="py-2 px-3">
-                            <div className="font-semibold text-slate-800">{p.name}</div>
-                            <div className="text-[10px] text-slate-500">{p.nhs}</div>
-                          </td>
-                          <td className="py-2 px-3 text-slate-600">{p.bed}</td>
-                          <td className="py-2 px-3">
-                            <div className={`w-2.5 h-2.5 rounded-full ${getRiskDotColor(p.risk)}`}/>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  {filteredPatients.length === 0 && (
+                    <p className="py-8 text-center text-xs text-slate-400 italic">No patients found for {selectedWard}</p>
+                  )}
+                  {filteredPatients.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => { setSelectedPatientId(p.id); setTrajectoryDay(null); setIsPlaying(false); }}
+                      className={`flex items-stretch border-b border-slate-100 cursor-pointer hover:bg-blue-50 transition-colors ${selectedPatientId === p.id ? 'bg-blue-50' : ''}`}
+                    >
+                      <div className={`w-1 shrink-0 ${getRiskBarColor(p.risk)}`}/>
+                      <div className="flex-1 px-3 py-2.5 min-w-0">
+                        <div className="font-semibold text-sm text-slate-800 truncate">{p.name}</div>
+                        <div className={`text-[10px] font-semibold mt-0.5 ${getRiskTextColor(p.risk)}`}>
+                          {p.risk.toUpperCase()} RISK
+                        </div>
+                      </div>
+                      <div className="px-3 py-2.5 text-xs text-slate-400 font-medium self-center shrink-0">
+                        Bed {bedLabel(p.bed)}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
 
               {/* COL 2 — FLOOR PLAN + PATIENT TRAJECTORY */}
               <div className="flex-1 flex flex-col overflow-hidden bg-slate-100 border-r border-slate-200">
                 {/* Patient header card */}
-                <div className="shrink-0 bg-white border-b border-slate-200 px-4 py-3">
+                <div className="shrink-0 bg-white border-b border-slate-200 px-5 py-4">
                   {selectedPatient ? (
                     <>
-                      <h2 className="font-bold text-base text-slate-900">{selectedPatient.name}</h2>
-                      <div className="flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] text-slate-600 mt-1">
-                        <span>A: {selectedPatient.age}{selectedPatient.sex}</span>
-                        <span>NHS: {selectedPatient.nhs}</span>
-                        <span>Bed: {selectedPatient.bed}</span>
-                        <span>LoS: {selectedPatient.los} days</span>
-                        <span>Consultant: {selectedPatient.consultant}</span>
+                      {/* Row 1 — Name + age/sex badge */}
+                      <div className="flex items-center gap-2.5">
+                        <h2 className="font-bold text-lg text-slate-900 leading-tight">{selectedPatient.name}</h2>
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                          {selectedPatient.age}{selectedPatient.sex}
+                        </span>
                       </div>
-                      <div className="mt-1 text-[11px] text-slate-700">
-                        <strong className="text-slate-800">Dx:</strong> {selectedPatient.diagnosis}
+
+                      {/* Row 2 — Stat chips */}
+                      <div className="flex flex-wrap gap-2 mt-2.5">
+                        {[
+                          { label: 'Bed',        value: `Bed ${bedLabel(selectedPatient.bed)}` },
+                          { label: 'LoS',        value: `${selectedPatient.los} days` },
+                          { label: 'Consultant', value: selectedPatient.consultant },
+                        ].map(({ label, value }) => (
+                          <div key={label} className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-md px-2.5 py-1">
+                            <span className="text-[10px] font-bold uppercase tracking-wide text-slate-400">{label}</span>
+                            <span className="text-xs font-semibold text-slate-700">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Row 3 — Diagnosis */}
+                      <div className="mt-2.5 flex items-start gap-2 bg-blue-50 border border-blue-100 rounded-md px-3 py-1.5">
+                        <span className="text-[10px] font-bold uppercase tracking-wide text-blue-400 mt-0.5 shrink-0">Dx</span>
+                        <span className="text-xs text-blue-900 font-medium leading-snug">{selectedPatient.diagnosis}</span>
                       </div>
                     </>
                   ) : (
@@ -301,33 +277,67 @@ export default function App() {
                   )}
                 </div>
 
-                {/* Floor plan */}
-                <div className="flex-1 relative overflow-hidden m-3 rounded-lg border border-slate-200 bg-white shadow-sm">
-                  <img
-                    src={`${import.meta.env.BASE_URL}${WARD_LIST.find(w => w.name === selectedWard)?.floorPlan ?? 'ward-floorplan.png'}`}
-                    alt={`${selectedWard} Floor Plan`}
-                    className="w-full h-full object-contain"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
-                  {/* Patient bed dots */}
-                  {patients.map((p) => {
-                    const pos = BED_POSITIONS[p.bed];
-                    if (!pos) return null;
-                    const isSelected = p.id === selectedPatientId;
+                {/* Risk summary + Risk Factors */}
+                <div className="flex-1 overflow-y-auto m-3 space-y-3">
+                  {selectedPatient ? (() => {
+                    const displayRisk        = activeSnapshot?.risk        ?? selectedPatient.risk;
+                    const displayRiskFactors = activeSnapshot?.riskFactors ?? selectedPatient.riskFactors;
                     return (
-                      <div
-                        key={p.id}
-                        onClick={() => setSelectedPatientId(p.id)}
-                        title={`${p.name} — ${p.bed}`}
-                        className={`absolute cursor-pointer rounded-full border-2 border-white shadow-md -translate-x-1/2 -translate-y-1/2 transition-all hover:scale-125 ${
-                          isSelected
-                            ? 'w-5 h-5 ring-2 ring-offset-1 ring-blue-500 animate-pulse z-10'
-                            : 'w-3.5 h-3.5 z-0'
-                        }`}
-                        style={{ left: pos.left, top: pos.top, backgroundColor: getRiskHex(p.risk) }}
-                      />
+                      <>
+                        {/* Discharge Risk Assessment — unified card */}
+                        <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
+                          {/* Card header */}
+                          <div className="px-4 py-2.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                            <AlertTriangle size={12}/> Discharge Risk Assessment
+                          </div>
+                          {/* Risk summary row */}
+                          <div className={`flex items-center gap-3 px-4 py-3 border-b border-slate-100 ${getRiskBadgeClasses(displayRisk)}`}>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${getRiskIconBg(displayRisk)} text-white`}>
+                              {displayRisk === 'low' ? <CheckCircle2 size={16}/> : <AlertTriangle size={16}/>}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className={`text-xs font-bold ${getRiskTextColor(displayRisk)}`}>
+                                {displayRisk === 'high'   ? 'High Risk of Delayed Discharge'   :
+                                 displayRisk === 'medium' ? 'Medium Risk of Delayed Discharge' :
+                                 'Low Risk — On Track'}
+                              </div>
+                              <div className="text-[10px] text-slate-500 mt-0.5">
+                                AI detected {displayRiskFactors.length} bottleneck{displayRiskFactors.length !== 1 ? 's' : ''}
+                              </div>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <div className="text-[9px] text-slate-400 uppercase tracking-wide">AI Confidence</div>
+                              <div className={`text-sm font-bold ${getRiskTextColor(displayRisk)}`}>
+                                {displayRisk === 'high' ? '92' : displayRisk === 'medium' ? '78' : '95'}%
+                              </div>
+                            </div>
+                          </div>
+                          {/* Risk factor items */}
+                          <div className="divide-y divide-slate-100">
+                            {displayRiskFactors.map((rf, idx) => (
+                              <div key={idx} className="flex items-center gap-3 px-4 py-3">
+                                <div className={`w-6 h-6 rounded-md flex items-center justify-center shrink-0 text-xs font-bold ${getFactorIconClasses(rf.icon)}`}>
+                                  {rf.icon === 'critical' ? '!' : rf.icon === 'warning' ? '~' : 'i'}
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="text-xs font-bold text-slate-900 truncate">{rf.title}</div>
+                                  <div className="text-[10px] text-slate-500 mt-0.5 truncate">{rf.desc}</div>
+                                </div>
+                                {rf.tag && (
+                                  <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0 ${getFactorTagClasses(rf.tag)}`}>
+                                    {rf.tagLabel}
+                                  </span>
+                                )}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </>
                     );
-                  })}
+                  })() : (
+                    <p className="text-sm text-slate-400 italic p-4">Select a patient to view their discharge summary.</p>
+                  )}
                 </div>
 
                 {/* Patient Trajectory Scrubber */}
@@ -386,44 +396,80 @@ export default function App() {
                   </div>
                 )}
 
-                {/* Ward Stats bar */}
-                {(() => {
-                  const totalBeds = 12;
-                  const occupied = patients.length;
-                  const avgOccupancy = Math.round((occupied / totalBeds) * 100);
-                  const avgStayHrs = Math.round((patients.reduce((s, p) => s + p.los, 0) / patients.length) * 24 * 10) / 10;
-                  const totalAdmissions = patients.length + 25; // includes discharged
-                  const queueSize = patients.filter(p => p.risk === 'high').length;
-                  const delayedDays = patients.reduce((s, p) => s + p.riskFactors.filter(r => r.tag === 'critical').length, 0);
-                  const stats = [
-                    { icon: <User size={12}/>,          label: 'Avg. Occupancy',    val: `${avgOccupancy}%`,           cls: '' },
-                    { icon: <Clock size={12}/>,         label: 'Avg. Stay (hrs)',   val: `${avgStayHrs}`,              cls: '' },
-                    { icon: <LayoutDashboard size={12}/>, label: 'Total Admissions', val: `${totalAdmissions}`,         cls: '' },
-                    { icon: <Users size={12}/>,         label: 'Queue Size',        val: `${queueSize}`,               cls: '' },
-                    { icon: <AlertTriangle size={12}/>, label: 'Delayed Days',      val: `${delayedDays}`,             cls: 'text-red-600 font-bold' },
-                  ];
-                  return (
-                    <div className="shrink-0 bg-white border-t border-slate-200 px-4 py-2 grid grid-cols-2 gap-x-6 gap-y-1">
-                      {stats.map(({ icon, label, val, cls }) => (
-                        <div key={label} className="flex items-center justify-between text-xs py-0.5">
-                          <span className="flex items-center gap-1.5 text-slate-500">{icon} {label}</span>
-                          <span className={`font-semibold ${cls || 'text-slate-800'}`}>{val}</span>
-                        </div>
-                      ))}
-                    </div>
-                  );
-                })()}
               </div>
 
-              {/* COL 3 — DISCHARGE DETAILS */}
-              <div className="w-[380px] overflow-y-auto bg-slate-50 shrink-0 flex flex-col">
+              {/* COL 3 — INTERVENTIONS + TIMELINE */}
+              <div className="flex-1 overflow-y-auto bg-slate-50 flex flex-col">
                 {selectedPatient ? (() => {
-                  const displayRisk          = activeSnapshot?.risk          ?? selectedPatient.risk;
-                  const displayRiskFactors   = activeSnapshot?.riskFactors   ?? selectedPatient.riskFactors;
                   const displayInterventions = activeSnapshot?.interventions ?? selectedPatient.interventions;
-                  const displayTimeline      = activeSnapshot?.events        ?? selectedPatient.timeline;
+                  const displayRisk3         = activeSnapshot?.risk ?? selectedPatient.risk;
                   return (
                   <div className="p-4 space-y-4">
+                    {/* AI Impact Box */}
+                    <div className="border border-blue-200 rounded-lg overflow-hidden bg-gradient-to-br from-blue-50 to-indigo-50">
+                      <div className="px-4 py-2.5 border-b border-blue-100 text-[10px] font-bold uppercase tracking-wider text-blue-700 flex items-center gap-1.5">
+                        <BarChart2 size={12}/> Predicted Operational Impact
+                      </div>
+                      <div className="grid grid-cols-3 divide-x divide-blue-100 text-center">
+                        <div className="px-3 py-3">
+                          <div className={`text-2xl font-bold ${displayRisk3 === 'low' ? 'text-green-600' : 'text-red-600'}`}>
+                            +{displayRisk3 === 'high' ? 3 : displayRisk3 === 'medium' ? 1 : 0}d
+                          </div>
+                          <div className="text-[9px] text-slate-500 mt-0.5 leading-tight uppercase tracking-wide">Predicted<br/>delay</div>
+                        </div>
+                        <div className="px-3 py-3">
+                          <div className="text-2xl font-bold text-green-600">
+                            +{displayRisk3 === 'high' ? 1 : 0}d
+                          </div>
+                          <div className="text-[9px] text-slate-500 mt-0.5 leading-tight uppercase tracking-wide">After<br/>actions</div>
+                        </div>
+                        <div className="px-3 py-3">
+                          <div className="text-2xl font-bold text-blue-600">7</div>
+                          <div className="text-[9px] text-slate-500 mt-0.5 leading-tight uppercase tracking-wide">Beds freed<br/>this week</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Recommended Actions */}
+                    <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
+                      <div className="px-4 py-2.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
+                        <Activity size={12}/> Recommended Actions
+                      </div>
+                      <div className="divide-y divide-slate-50">
+                        {displayInterventions.map((iv, idx) => {
+                          const isDone = completedInterventions[`${selectedPatient.id}-${idx}`];
+                          return (
+                            <div key={idx} className="flex items-center gap-3 px-4 py-3">
+                              <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 text-[10px] font-bold ${
+                                isDone ? 'bg-slate-200 text-slate-400' :
+                                idx === 0 ? 'bg-red-100 text-red-600' :
+                                idx === 1 ? 'bg-orange-100 text-orange-600' :
+                                'bg-blue-100 text-blue-600'
+                              }`}>
+                                {isDone ? <Check size={10} strokeWidth={3}/> : idx + 1}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className={`text-xs font-bold leading-tight ${isDone ? 'text-slate-400 line-through' : 'text-slate-900'}`} style={{display:'-webkit-box',WebkitLineClamp:2,WebkitBoxOrient:'vertical',overflow:'hidden'}}>{iv.title}</div>
+                              </div>
+                              <div className="flex items-center gap-2 shrink-0">
+                                <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${getPriorityClasses(iv.priority, isDone)}`}>
+                                  {iv.priority}
+                                </span>
+                                <button
+                                  onClick={() => toggleIntervention(selectedPatient.id, idx)}
+                                  className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+                                    isDone ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 hover:border-blue-500'
+                                  }`}
+                                >
+                                  {isDone && <Check size={9} strokeWidth={3}/>}
+                                </button>
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     {/* Day banner (shown when viewing historical snapshot) */}
                     {activeSnapshot && (
                       <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-xs">
@@ -432,106 +478,6 @@ export default function App() {
                       </div>
                     )}
 
-                    {/* Risk Banner */}
-                    <div className={`p-4 rounded-lg flex items-center gap-3 border ${getRiskBadgeClasses(displayRisk)} shadow-sm`}>
-                      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${getRiskIconBg(displayRisk)} text-white`}>
-                        {displayRisk === 'low' ? <CheckCircle2 size={18}/> : <AlertTriangle size={18}/>}
-                      </div>
-                      <div>
-                        <div className={`text-sm font-bold ${getRiskTextColor(displayRisk)}`}>
-                          {displayRisk === 'high' ? 'High Risk of Delayed Discharge' :
-                           displayRisk === 'medium' ? 'Medium Risk of Delayed Discharge' :
-                           'Low Risk — On Track'}
-                        </div>
-                        <div className="text-[11px] text-slate-600 mt-0.5">
-                          {displayRisk === 'high'
-                            ? `${displayRiskFactors.filter(r => r.tag === 'critical').length} critical bottlenecks identified. Immediate action required.`
-                            : displayRisk === 'medium'
-                            ? 'Moderate barriers present. Proactive steps recommended.'
-                            : 'All discharge tasks progressing normally. Monitor for changes.'}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Risk Factors */}
-                    <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
-                      <div className="px-4 py-2.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                        <AlertTriangle size={12}/> Risk Factors Identified
-                      </div>
-                      <div className="divide-y divide-slate-100">
-                        {displayRiskFactors.map((rf, idx) => (
-                          <div key={idx} className="flex gap-3 p-4">
-                            <div className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 text-sm font-bold ${getFactorIconClasses(rf.icon)}`}>
-                              {rf.icon === 'critical' ? '!' : rf.icon === 'warning' ? '~' : 'i'}
-                            </div>
-                            <div>
-                              <div className="text-xs font-bold text-slate-900">{rf.title}</div>
-                              <div className="text-[11px] text-slate-600 mt-1 leading-relaxed">{rf.desc}</div>
-                              {rf.tag && (
-                                <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mt-1.5 ${getFactorTagClasses(rf.tag)}`}>
-                                  {rf.tagLabel}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Interventions */}
-                    <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
-                      <div className="px-4 py-2.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                        <Activity size={12}/> Recommended Interventions
-                      </div>
-                      <div className="divide-y divide-slate-100">
-                        {displayInterventions.map((iv, idx) => {
-                          const isDone = completedInterventions[`${selectedPatient.id}-${idx}`];
-                          return (
-                            <div key={idx} className="flex gap-3 p-4 items-start">
-                              <button
-                                onClick={() => toggleIntervention(selectedPatient.id, idx)}
-                                className={`w-5 h-5 rounded border flex items-center justify-center shrink-0 mt-0.5 transition-colors ${
-                                  isDone ? 'bg-blue-600 border-blue-600 text-white' : 'bg-white border-slate-300 hover:border-blue-500'
-                                }`}
-                              >
-                                {isDone && <Check size={12} strokeWidth={3}/>}
-                              </button>
-                              <div>
-                                <div className={`text-xs font-bold ${isDone ? 'text-slate-400 line-through' : 'text-slate-900'}`}>{iv.title}</div>
-                                <div className={`text-[11px] mt-1 ${isDone ? 'opacity-60' : 'text-slate-600'}`}>{iv.desc}</div>
-                                <span className={`inline-block text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded mt-1.5 ${getPriorityClasses(iv.priority, isDone)}`}>
-                                  {iv.priority}
-                                </span>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-
-                    {/* Timeline */}
-                    <div className="border border-slate-200 rounded-lg bg-white shadow-sm overflow-hidden">
-                      <div className="px-4 py-2.5 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                        <Clock size={12}/> Patient Journey Timeline
-                      </div>
-                      <div className="p-4 space-y-0">
-                        {displayTimeline.map((t, idx) => (
-                          <div key={idx} className="flex gap-3 text-[11px]">
-                            <div className="font-mono text-[10px] text-slate-500 w-10 shrink-0 pt-0.5">{t.time}</div>
-                            <div className="flex flex-col items-center">
-                              <div className={`w-2 h-2 rounded-full shrink-0 mt-1.5 ${getTimelineDotColor(t.status)}`}/>
-                              {idx < displayTimeline.length - 1 && (
-                                <div className="w-px flex-1 bg-slate-200 my-1 min-h-[16px]"/>
-                              )}
-                            </div>
-                            <div
-                              className="text-slate-600 pb-3 pt-0.5"
-                              dangerouslySetInnerHTML={{ __html: t.text.replace(/<strong>/g, '<strong class="text-slate-900 font-semibold">') }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
                   </div>
                   );
                 })() : (
@@ -600,6 +546,12 @@ function FilterButton({ children, active, onClick, dotColor }: { children: React
 }
 
 // --- Helper Functions ---
+
+function getRiskBarColor(risk: RiskLevel) {
+  if (risk === 'high') return 'bg-[#C53030]';
+  if (risk === 'medium') return 'bg-[#C05621]';
+  return 'bg-[#276749]';
+}
 
 function getRiskDotColor(risk: RiskLevel) {
   if (risk === 'high') return 'bg-[#C53030]';
