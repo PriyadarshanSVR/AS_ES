@@ -830,7 +830,7 @@ function ChartReviewView() {
               { date: 'Today', type: 'Progress Note', provider: 'Dr. R. Patel', dept: 'General Medicine', dx: 'Pneumonia' },
               { date: 'Yesterday', type: 'PT Evaluation', provider: 'S. Miller, PT', dept: 'Physical Therapy', dx: 'Mobility Assessment' },
               { date: 'Admit Date', type: 'History & Physical', provider: 'Dr. J. Smith', dept: 'Emergency Dept', dx: 'Pneumonia, COPD Exac' },
-              { date: 'Admit Date', type: 'ED Provider Note', provider: 'Dr. A. Lee', dept: 'Emergency Dept', dx: 'SOB, Fever' },
+              { date: 'Admit Date', type: 'ED Provider Note', provider: 'Dr. A. Lee', dept: 'Emergency Dept', dx: 'Breathlessness, Fever' },
             ].map((row, i) => (
               <tr key={i} className="border-b border-slate-200 hover:bg-slate-50 cursor-pointer">
                 <td className="p-2">{row.date}</td>
