@@ -195,12 +195,6 @@ export default function App() {
                       </option>
                     ))}
                   </select>
-                  <div className="flex gap-1">
-                    <FilterButton active={riskFilter === 'all'} onClick={() => setRiskFilter('all')}>All</FilterButton>
-                    <FilterButton active={riskFilter === 'high'} onClick={() => setRiskFilter('high')} dotColor="bg-[#C53030]">High</FilterButton>
-                    <FilterButton active={riskFilter === 'medium'} onClick={() => setRiskFilter('medium')} dotColor="bg-[#C05621]">Medium</FilterButton>
-                    <FilterButton active={riskFilter === 'low'} onClick={() => setRiskFilter('low')} dotColor="bg-[#276749]">Low</FilterButton>
-                  </div>
                 </div>
                 <div className="flex-1 overflow-y-auto">
                   {filteredPatients.length === 0 && (
