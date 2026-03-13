@@ -253,14 +253,14 @@ export default function App() {
                 <div className="flex-1 flex overflow-hidden">
 
               {/* COL 2 — DISCHARGE RISK ASSESSMENT */}
-              <div className="flex-1 flex flex-col overflow-hidden bg-slate-100 border-r border-slate-200">
+              <div className="flex-1 flex flex-col overflow-hidden bg-slate-50 border-r border-slate-200">
 
                 {/* Patient Trajectory Scrubber — top of COL 2 */}
                 {selectedPatient?.dailySnapshots && (
                   <div className="shrink-0 m-3 rounded-lg overflow-hidden border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
                     {/* Card header */}
                     <div className="px-4 py-2.5 border-b border-blue-100 flex items-center gap-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Patient Trajectory</span>
+                      <Activity size={12} className="text-blue-700"/><span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Patient Trajectory</span>
                       {trajectoryDay === null ? (
                         <span className="bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
                       ) : (
