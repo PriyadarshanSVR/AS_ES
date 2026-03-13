@@ -257,9 +257,9 @@ export default function App() {
 
                 {/* Patient Trajectory Scrubber — top of COL 2 */}
                 {selectedPatient?.dailySnapshots && (
-                  <div className="shrink-0 bg-gradient-to-br from-blue-50 to-indigo-50 border-b border-blue-200">
-                    {/* Header row */}
-                    <div className="flex items-center gap-2 px-4 pt-2.5 pb-1">
+                  <div className="shrink-0 m-3 rounded-lg overflow-hidden border border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+                    {/* Card header */}
+                    <div className="px-4 py-2.5 border-b border-blue-100 flex items-center gap-1.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Patient Trajectory</span>
                       {trajectoryDay === null ? (
                         <span className="bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
@@ -268,7 +268,7 @@ export default function App() {
                       )}
                     </div>
                     {/* Controls row */}
-                    <div className="flex items-center gap-2 px-4 pb-2.5">
+                    <div className="flex items-center gap-2 px-4 py-2.5">
                       <button
                         onClick={() => { const cur = trajectoryDay ?? (selectedPatient.dailySnapshots!.length - 1); setTrajectoryDay(Math.max(0, cur - 1)); setIsPlaying(false); }}
                         disabled={trajectoryDay === 0}
