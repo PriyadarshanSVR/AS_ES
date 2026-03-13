@@ -257,7 +257,8 @@ export default function App() {
 
                 {/* Patient Trajectory Scrubber — top of COL 2 */}
                 {selectedPatient?.dailySnapshots && (
-                  <div className="shrink-0 bg-[#2B579A] px-4 py-2">
+                  <div className="shrink-0">
+                  <div className="bg-[#2B579A] px-4 py-2">
                     <div className="flex items-center gap-2 mb-1.5">
                       <span className="text-[10px] font-bold uppercase tracking-wider text-blue-200">Patient Trajectory</span>
                       {trajectoryDay === null ? (
@@ -304,6 +305,16 @@ export default function App() {
                         >Live</button>
                       )}
                     </div>
+                  </div>
+                  {/* Day banner — shown when viewing historical snapshot */}
+                  {activeSnapshot ? (
+                    <div className="bg-blue-50 border-b border-blue-200 px-4 py-2">
+                      <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Viewing Day {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
+                      <div className="text-[10px] text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
+                    </div>
+                  ) : (
+                    <div className="bg-white/5 border-b border-[#1e4080] px-4 py-2 min-h-[38px]"/>
+                  )}
                   </div>
                 )}
 
@@ -445,13 +456,6 @@ export default function App() {
                       </div>
                     </div>
 
-                    {/* Day banner (shown when viewing historical snapshot) */}
-                    {activeSnapshot && (
-                      <div className="rounded-md bg-blue-50 border border-blue-200 px-3 py-2 text-xs">
-                        <span className="font-bold text-blue-800">VIEWING DAY {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
-                        <div className="text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
-                      </div>
-                    )}
 
                   </div>
                   );
