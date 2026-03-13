@@ -306,13 +306,25 @@ export default function App() {
                         >Live</button>
                       )}
                     </div>
-                    {/* Day banner */}
-                    {activeSnapshot && (
-                      <div className="px-4 py-2 border-t border-blue-100">
-                        <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Viewing Day {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
-                        <div className="text-[10px] text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
-                      </div>
-                    )}
+                    {/* Day banner — always visible */}
+                    {(() => {
+                      const snap = activeSnapshot ?? selectedPatient.dailySnapshots![selectedPatient.dailySnapshots!.length - 1];
+                      return (
+                        <div className="px-4 py-2 border-t border-blue-100 flex items-center gap-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">
+                                {trajectoryDay === null ? `Day ${snap.day}` : `Viewing Day ${snap.day}`} — {snap.dateLabel}
+                              </span>
+                              {trajectoryDay === null && (
+                                <span className="bg-green-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full animate-pulse shrink-0">LIVE</span>
+                              )}
+                            </div>
+                            <div className="text-[10px] text-blue-600 mt-0.5">{snap.headline}</div>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 )}
 
