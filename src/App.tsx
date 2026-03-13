@@ -263,26 +263,26 @@ export default function App() {
 
                 {/* Patient Trajectory Scrubber — top of COL 2 */}
                 {selectedPatient?.dailySnapshots && (
-                  <div className="shrink-0 bg-white border-b border-slate-200 px-4 py-2">
-                    <div className="flex items-center justify-between mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Patient Trajectory</span>
+                  <div className="shrink-0 bg-[#2B579A] px-4 py-2">
+                    <div className="flex items-center gap-2 mb-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-200">Patient Trajectory</span>
                       {trajectoryDay === null ? (
-                        <span className="bg-green-600 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
+                        <span className="bg-green-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
                       ) : (
-                        <span className="text-[10px] text-slate-500">Day {trajectoryDay} of {selectedPatient.dailySnapshots.length - 1}</span>
+                        <span className="text-[10px] font-semibold text-white bg-white/20 px-2 py-0.5 rounded-full">Day {trajectoryDay} of {selectedPatient.dailySnapshots.length - 1}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => { const cur = trajectoryDay ?? (selectedPatient.dailySnapshots!.length - 1); setTrajectoryDay(Math.max(0, cur - 1)); setIsPlaying(false); }}
                         disabled={trajectoryDay === 0}
-                        className="p-1 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30"
+                        className="p-1 rounded hover:bg-white/20 text-white disabled:opacity-30"
                       ><ArrowLeft size={14}/></button>
                       <input
                         type="range" min={0} max={selectedPatient.dailySnapshots.length - 1}
                         value={trajectoryDay ?? (selectedPatient.dailySnapshots.length - 1)}
                         onChange={(e) => { setTrajectoryDay(Number(e.target.value)); setIsPlaying(false); }}
-                        className="flex-1 h-1.5 cursor-pointer accent-blue-600"
+                        className="flex-1 h-1.5 cursor-pointer accent-white"
                       />
                       <button
                         onClick={() => {
@@ -292,7 +292,7 @@ export default function App() {
                           setIsPlaying(false);
                         }}
                         disabled={trajectoryDay === null}
-                        className="p-1 rounded hover:bg-slate-100 text-slate-600 disabled:opacity-30"
+                        className="p-1 rounded hover:bg-white/20 text-white disabled:opacity-30"
                       ><ArrowRight size={14}/></button>
                       <button
                         onClick={() => {
@@ -301,12 +301,12 @@ export default function App() {
                           if (trajectoryDay === null || trajectoryDay >= max) setTrajectoryDay(0);
                           setIsPlaying(true);
                         }}
-                        className={`px-2 py-1 rounded text-[10px] font-bold ${isPlaying ? 'bg-amber-100 text-amber-700 border border-amber-300' : 'bg-blue-600 text-white hover:bg-blue-700'}`}
+                        className={`px-2 py-1 rounded text-[10px] font-bold ${isPlaying ? 'bg-white/20 text-white border border-white/30' : 'bg-white text-[#2B579A] hover:bg-blue-50'}`}
                       >{isPlaying ? 'Pause' : '▶ Play'}</button>
                       {trajectoryDay !== null && (
                         <button
                           onClick={() => { setTrajectoryDay(null); setIsPlaying(false); }}
-                          className="px-2 py-1 rounded text-[10px] font-bold bg-green-600 text-white hover:bg-green-700"
+                          className="px-2 py-1 rounded text-[10px] font-bold bg-green-400 text-white hover:bg-green-500"
                         >Live</button>
                       )}
                     </div>
