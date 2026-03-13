@@ -257,27 +257,28 @@ export default function App() {
 
                 {/* Patient Trajectory Scrubber — top of COL 2 */}
                 {selectedPatient?.dailySnapshots && (
-                  <div className="shrink-0">
-                  <div className="bg-[#2B579A] px-4 py-2">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-200">Patient Trajectory</span>
+                  <div className="shrink-0 bg-gradient-to-br from-blue-50 to-indigo-50 border-b border-blue-200">
+                    {/* Header row */}
+                    <div className="flex items-center gap-2 px-4 pt-2.5 pb-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-blue-700">Patient Trajectory</span>
                       {trajectoryDay === null ? (
-                        <span className="bg-green-400 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
+                        <span className="bg-green-500 text-white text-[9px] font-bold px-2 py-0.5 rounded-full animate-pulse">LIVE</span>
                       ) : (
-                        <span className="text-[10px] font-semibold text-white bg-white/20 px-2 py-0.5 rounded-full">Day {trajectoryDay} of {selectedPatient.dailySnapshots.length - 1}</span>
+                        <span className="text-[10px] font-semibold text-blue-700 bg-blue-100 border border-blue-200 px-2 py-0.5 rounded-full">Day {trajectoryDay} of {selectedPatient.dailySnapshots.length - 1}</span>
                       )}
                     </div>
-                    <div className="flex items-center gap-2">
+                    {/* Controls row */}
+                    <div className="flex items-center gap-2 px-4 pb-2.5">
                       <button
                         onClick={() => { const cur = trajectoryDay ?? (selectedPatient.dailySnapshots!.length - 1); setTrajectoryDay(Math.max(0, cur - 1)); setIsPlaying(false); }}
                         disabled={trajectoryDay === 0}
-                        className="p-1 rounded hover:bg-white/20 text-white disabled:opacity-30"
+                        className="p-1 rounded hover:bg-blue-100 text-blue-600 disabled:opacity-30"
                       ><ArrowLeft size={14}/></button>
                       <input
                         type="range" min={0} max={selectedPatient.dailySnapshots.length - 1}
                         value={trajectoryDay ?? (selectedPatient.dailySnapshots.length - 1)}
                         onChange={(e) => { setTrajectoryDay(Number(e.target.value)); setIsPlaying(false); }}
-                        className="flex-1 h-1.5 cursor-pointer accent-white"
+                        className="flex-1 h-1.5 cursor-pointer accent-blue-600"
                       />
                       <button
                         onClick={() => {
@@ -287,7 +288,7 @@ export default function App() {
                           setIsPlaying(false);
                         }}
                         disabled={trajectoryDay === null}
-                        className="p-1 rounded hover:bg-white/20 text-white disabled:opacity-30"
+                        className="p-1 rounded hover:bg-blue-100 text-blue-600 disabled:opacity-30"
                       ><ArrowRight size={14}/></button>
                       <button
                         onClick={() => {
@@ -296,25 +297,22 @@ export default function App() {
                           if (trajectoryDay === null || trajectoryDay >= max) setTrajectoryDay(0);
                           setIsPlaying(true);
                         }}
-                        className={`px-2 py-1 rounded text-[10px] font-bold ${isPlaying ? 'bg-white/20 text-white border border-white/30' : 'bg-white text-[#2B579A] hover:bg-blue-50'}`}
+                        className={`px-2 py-1 rounded text-[10px] font-bold border ${isPlaying ? 'bg-blue-100 text-blue-700 border-blue-300' : 'bg-white text-blue-700 border-blue-200 hover:bg-blue-50'}`}
                       >{isPlaying ? 'Pause' : '▶ Play'}</button>
                       {trajectoryDay !== null && (
                         <button
                           onClick={() => { setTrajectoryDay(null); setIsPlaying(false); }}
-                          className="px-2 py-1 rounded text-[10px] font-bold bg-green-400 text-white hover:bg-green-500"
+                          className="px-2 py-1 rounded text-[10px] font-bold bg-green-500 text-white hover:bg-green-600"
                         >Live</button>
                       )}
                     </div>
-                  </div>
-                  {/* Day banner — shown when viewing historical snapshot */}
-                  {activeSnapshot ? (
-                    <div className="bg-blue-50 border-b border-blue-200 px-4 py-2">
-                      <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Viewing Day {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
-                      <div className="text-[10px] text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
-                    </div>
-                  ) : (
-                    <div className="bg-white/5 border-b border-[#1e4080] px-4 py-2 min-h-[38px]"/>
-                  )}
+                    {/* Day banner */}
+                    {activeSnapshot && (
+                      <div className="px-4 py-2 border-t border-blue-100">
+                        <span className="text-[10px] font-bold text-blue-800 uppercase tracking-wide">Viewing Day {activeSnapshot.day} — {activeSnapshot.dateLabel}</span>
+                        <div className="text-[10px] text-blue-600 mt-0.5">{activeSnapshot.headline}</div>
+                      </div>
+                    )}
                   </div>
                 )}
 
