@@ -88,6 +88,24 @@ export default function App() {
     return selectedPatient.dailySnapshots[trajectoryDay] ?? null;
   }, [selectedPatient, trajectoryDay]);
 
+  // Dynamic risk + delay: ticking off actions reduces predicted delay and can lower risk level
+  const { adjustedRisk, baseDelay, afterActionsDelay } = useMemo(() => {
+    if (!selectedPatient) return { adjustedRisk: 'low' as RiskLevel, baseDelay: 0, afterActionsDelay: 0 };
+    const snap = trajectoryDay !== null ? selectedPatient.dailySnapshots?.[trajectoryDay] : null;
+    const baseRisk: RiskLevel  = snap?.risk        ?? selectedPatient.risk;
+    const interventions        = snap?.interventions ?? selectedPatient.interventions;
+    const reductionMap: Record<string, number> = { urgent: 1.5, recommended: 0.5, optional: 0.25 };
+    const completed = interventions.reduce((sum, iv, idx) => {
+      return sum + (completedInterventions[`${selectedPatient.id}-${idx}`] ? (reductionMap[iv.priority] ?? 0.25) : 0);
+    }, 0);
+    const base  = baseRisk === 'high' ? 3 : baseRisk === 'medium' ? 1 : 0;
+    const after = Math.max(0, base - completed);
+    // Only update risk dynamically in LIVE mode (not while scrubbing history)
+    const adj: RiskLevel = trajectoryDay !== null ? baseRisk :
+      after > 1.5 ? 'high' : after > 0 ? 'medium' : 'low';
+    return { adjustedRisk: adj, baseDelay: base, afterActionsDelay: after };
+  }, [selectedPatient, trajectoryDay, completedInterventions]);
+
   useEffect(() => {
     if (!isPlaying || !selectedPatient?.dailySnapshots) return;
     const max = selectedPatient.dailySnapshots.length - 1;
@@ -331,7 +349,7 @@ export default function App() {
                 {/* Risk summary + Risk Factors */}
                 <div className="flex-1 min-h-0 overflow-y-auto m-3 space-y-3">
                   {selectedPatient ? (() => {
-                    const displayRisk        = activeSnapshot?.risk        ?? selectedPatient.risk;
+                    const displayRisk        = adjustedRisk;
                     const displayRiskFactors = activeSnapshot?.riskFactors ?? selectedPatient.riskFactors;
                     return (
                       <>
@@ -398,7 +416,6 @@ export default function App() {
               <div className="flex-1 overflow-y-auto bg-slate-50 flex flex-col">
                 {selectedPatient ? (() => {
                   const displayInterventions = activeSnapshot?.interventions ?? selectedPatient.interventions;
-                  const displayRisk3         = activeSnapshot?.risk ?? selectedPatient.risk;
                   return (
                   <div className="p-4 space-y-4">
                     {/* AI Impact Box */}
@@ -408,14 +425,14 @@ export default function App() {
                       </div>
                       <div className="grid grid-cols-3 divide-x divide-blue-100 text-center">
                         <div className="px-3 py-3">
-                          <div className={`text-2xl font-bold ${displayRisk3 === 'low' ? 'text-green-600' : 'text-red-600'}`}>
-                            +{displayRisk3 === 'high' ? 3 : displayRisk3 === 'medium' ? 1 : 0}d
+                          <div className={`text-2xl font-bold ${baseDelay === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            +{baseDelay}d
                           </div>
                           <div className="text-[9px] text-slate-500 mt-0.5 leading-tight uppercase tracking-wide">Predicted<br/>delay</div>
                         </div>
                         <div className="px-3 py-3">
-                          <div className="text-2xl font-bold text-green-600">
-                            +{displayRisk3 === 'high' ? 1 : 0}d
+                          <div className={`text-2xl font-bold ${afterActionsDelay === 0 ? 'text-green-600' : afterActionsDelay < baseDelay ? 'text-orange-500' : 'text-red-600'}`}>
+                            +{Math.round(afterActionsDelay)}d
                           </div>
                           <div className="text-[9px] text-slate-500 mt-0.5 leading-tight uppercase tracking-wide">After<br/>actions</div>
                         </div>
